@@ -8,4 +8,10 @@
       <PackageReference Include="Itmo.Dev.Platform.Events" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Tasks\Dtos\TaskDtoConverter.cs">
+        <DependentUpon>TaskDto.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

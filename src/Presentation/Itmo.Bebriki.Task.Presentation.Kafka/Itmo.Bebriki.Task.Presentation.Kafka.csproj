@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.Tools"/>
+        <PackageReference Include="Itmo.Dev.Platform.Kafka"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="protos\*.proto" GrpcServices="None"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="protos\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Application\Itmo.Bebriki.Task.Application.Contracts\Itmo.Bebriki.Task.Application.Contracts.csproj"/>
+    </ItemGroup>
+
+</Project>

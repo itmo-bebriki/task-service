@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+      <RootNamespace>Itmo.Bebriki.Tasks</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Application\Itmo.Bebriki.Tasks.Application\Itmo.Bebriki.Tasks.Application.csproj" />
+        <ProjectReference Include="..\Infrastructure\Itmo.Bebriki.Tasks.Infrastructure.Persistence\Itmo.Bebriki.Tasks.Infrastructure.Persistence.csproj" />
+        <ProjectReference Include="..\Presentation\Itmo.Bebriki.Tasks.Presentation.Grpc\Itmo.Bebriki.Tasks.Presentation.Grpc.csproj" />
+        <ProjectReference Include="..\Presentation\Itmo.Bebriki.Tasks.Presentation.Kafka\Itmo.Bebriki.Tasks.Presentation.Kafka.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Itmo.Dev.Platform.Observability" />
+        <PackageReference Include="Itmo.Dev.Platform.BackgroundTasks.Hangfire.Postgres" />
+        <PackageReference Include="Itmo.Dev.Platform.BackgroundTasks.Postgres" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Update="appsettings.*.json">
+            <DependentUpon>appsettings.json</DependentUpon>
+        </Content>
+    </ItemGroup>
+
+</Project>

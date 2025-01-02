@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <RootNamespace>Itmo.Bebriki.Tasks.Presentation.Grpc</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Folder Include="protos\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore"/>
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf ProtoRoot="protos" Include="protos\**\*.proto" GrpcServices="Server"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Application\Itmo.Bebriki.Tasks.Application.Contracts\Itmo.Bebriki.Tasks.Application.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

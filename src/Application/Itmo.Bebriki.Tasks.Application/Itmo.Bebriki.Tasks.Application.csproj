@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <RootNamespace>Itmo.Bebriki.Tasks.Application</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Itmo.Bebriki.Tasks.Application.Abstractions\Itmo.Bebriki.Tasks.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Itmo.Bebriki.Tasks.Application.Contracts\Itmo.Bebriki.Tasks.Application.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Itmo.Dev.Platform.BackgroundTasks"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
+    </ItemGroup>
+
+</Project>

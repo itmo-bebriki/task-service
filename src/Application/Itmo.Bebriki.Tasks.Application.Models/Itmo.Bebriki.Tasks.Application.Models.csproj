@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Itmo.Bebriki.Tasks.Application.Models</RootNamespace>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <RootNamespace>Itmo.Bebriki.Tasks.Application.Contracts</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Itmo.Bebriki.Tasks.Application.Models\Itmo.Bebriki.Tasks.Application.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Itmo.Dev.Platform.Events" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Tasks\Dtos\TaskDtoConverter.cs">
+        <DependentUpon>TaskDto.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,9 @@
+namespace Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
+
+public sealed record CreateJobTaskContext(
+    string Title,
+    string? Description,
+    long AssigneeId,
+    JobTaskPriority Priority,
+    ISet<long> DependOnTasks,
+    DateTimeOffset? DeadLine);

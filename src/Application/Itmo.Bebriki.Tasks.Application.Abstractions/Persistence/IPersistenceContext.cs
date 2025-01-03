@@ -1,6 +1,8 @@
+using Itmo.Bebriki.Tasks.Application.Abstractions.Persistence.Repositories;
+
 namespace Itmo.Bebriki.Tasks.Application.Abstractions.Persistence;
 
 public interface IPersistenceContext
 {
-    // TODO: add repository properties
+    IJobTaskRepository JobTasks { get; }
 }

@@ -16,6 +16,15 @@
       <Compile Update="Tasks\Dtos\TaskDtoConverter.cs">
         <DependentUpon>TaskDto.cs</DependentUpon>
       </Compile>
+      <Compile Update="JobTasks\Operations\CreateJobTaskCommandConverter.cs">
+        <DependentUpon>CreateJobTaskCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="JobTasks\Operations\UpdateJobTaskCommandConverter.cs">
+        <DependentUpon>UpdateJobTaskCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="JobTasks\Events\CreateJobTaskEventConverter.cs">
+        <DependentUpon>CreateJobTaskEvent.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

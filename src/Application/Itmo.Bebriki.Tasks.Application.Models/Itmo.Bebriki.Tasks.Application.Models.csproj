@@ -2,4 +2,9 @@
   <PropertyGroup>
     <RootNamespace>Itmo.Bebriki.Tasks.Application.Models</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="JobTasks\JobTaskFactory.cs">
+      <DependentUpon>JobTask.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

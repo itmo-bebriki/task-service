@@ -12,7 +12,7 @@ public static class JobTaskFactory
         JobTaskState state,
         JobTaskPriority priority,
         IReadOnlyCollection<long> dependsOnIds,
-        DateTimeOffset deadline,
+        DateTimeOffset? deadline,
         bool isAgreed,
         DateTimeOffset updatedAt)
     {

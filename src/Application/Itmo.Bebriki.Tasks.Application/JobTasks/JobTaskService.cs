@@ -59,6 +59,7 @@ public sealed class JobTaskService : IJobTaskService
         CreateJobTaskCommand command,
         CancellationToken cancellationToken)
     {
+        // TODO проверка на циклические зависимости
         CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask jobTask = JobTaskFactory.CreateFromCreateContext(context);
 
@@ -68,20 +69,30 @@ public sealed class JobTaskService : IJobTaskService
             IsolationLevel.ReadCommitted,
             cancellationToken);
 
-        long newId = await _persistenceContext.JobTasks
-            .AddAsync([jobTask], cancellationToken)
-            .FirstAsync(cancellationToken);
-        await _eventPublisher.PublishAsync(createJobTaskEvent, cancellationToken);
+        try
+        {
+            long newId = await _persistenceContext.JobTasks
+                .AddAsync([jobTask], cancellationToken)
+                .FirstAsync(cancellationToken);
 
-        await transaction.CommitAsync(cancellationToken);
+            await _eventPublisher.PublishAsync(createJobTaskEvent, cancellationToken);
 
-        return newId;
+            await transaction.CommitAsync(cancellationToken);
+
+            return newId;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task UpdateJobTaskAsync(
         UpdateJobTaskCommand command,
         CancellationToken cancellationToken)
     {
+        // TODO проверка на циклические зависимости
         var jobTaskQuery = JobTaskQuery.Build(builder => builder
             .WithJobTaskId(command.JobTaskId)
             .WithPageSize(1));
@@ -98,6 +109,24 @@ public sealed class JobTaskService : IJobTaskService
         UpdateJobTaskContext context = UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(jobTask, context);
 
-        await _persistenceContext.JobTasks.UpdateAsync([updatedJobTask], cancellationToken);
+        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(updatedJobTask);
+
+        await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
+            IsolationLevel.ReadCommitted,
+            cancellationToken);
+
+        try
+        {
+            await _persistenceContext.JobTasks.UpdateAsync([updatedJobTask], cancellationToken);
+
+            await _eventPublisher.PublishAsync(updateJobTaskEvent, cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

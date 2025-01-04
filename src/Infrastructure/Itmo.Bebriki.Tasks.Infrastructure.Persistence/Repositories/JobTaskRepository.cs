@@ -108,9 +108,73 @@ internal sealed class JobTaskRepository : IJobTaskRepository
         }
     }
 
-    public IAsyncEnumerable<long> AddAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<long> AddAsync(
+        IReadOnlyCollection<JobTask> jobTasks,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string insertTasksSql =
+        """
+        insert into job_tasks as jt 
+            (title, description, assignee_id, state, priority, dead_line, is_agreed, updated_at)
+        select 
+            source.title,
+            source.description,
+            source.assignee_id,
+            source.state,
+            source.priority,
+            source.dead_line,
+            source.is_agreed,
+            source.updated_at
+        from unnest(:titles, :descriptions, :assignee_ids, :states, :priorities, :deadlines, :is_agreeds, :updated_ats) 
+            as source(title, description, assignee_id, state, priority, dead_line, is_agreed, updated_at)
+        returning jt.job_task_id;
+        """;
+
+        const string insertDependenciesSql =
+        """
+        insert into job_task_dependencies (job_task_id, depends_on_job_task_id)
+        select :job_task_id, unnest(:depends_on_job_task_ids);
+        """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand insertTaskCommand = connection.CreateCommand(insertTasksSql)
+            .AddParameter("titles", jobTasks.Select(t => t.Title))
+            .AddParameter("descriptions", jobTasks.Select(t => t.Description))
+            .AddParameter("assignee_ids", jobTasks.Select(t => t.AssigneeId))
+            .AddParameter("states", jobTasks.Select(t => t.State))
+            .AddParameter("priorities", jobTasks.Select(t => t.Priority))
+            .AddParameter("deadlines", jobTasks.Select(t => t.DeadLine))
+            .AddParameter("is_agreeds", jobTasks.Select(t => t.IsAgreed))
+            .AddParameter("updated_ats", jobTasks.Select(t => t.UpdatedAt));
+
+        var newJobTaskIds = new List<long>();
+        await using DbDataReader reader = await insertTaskCommand.ExecuteReaderAsync(cancellationToken);
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            long jobTaskId = reader.GetInt64(0);
+            newJobTaskIds.Add(jobTaskId);
+
+            yield return jobTaskId;
+        }
+
+        for (int i = 0; i < jobTasks.Count; i++)
+        {
+            JobTask jobTask = jobTasks.ElementAt(i);
+            long newJobTaskId = newJobTaskIds[i];
+
+            if (!jobTask.DependOnTasks.Any())
+            {
+                continue;
+            }
+
+            await using IPersistenceCommand insertDependenciesCommand = connection.CreateCommand(insertDependenciesSql)
+                .AddParameter("job_task_id", newJobTaskId)
+                .AddParameter("depends_on_job_task_ids", jobTask.DependOnTasks.ToArray());
+
+            await insertDependenciesCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     public Task UpdateAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken)

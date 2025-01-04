@@ -25,6 +25,9 @@
       <Compile Update="JobTasks\Events\CreateJobTaskEventConverter.cs">
         <DependentUpon>CreateJobTaskEvent.cs</DependentUpon>
       </Compile>
+      <Compile Update="JobTasks\Events\UpdateJobTaskEventConverter.cs">
+        <DependentUpon>UpdateJobTaskEvent.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

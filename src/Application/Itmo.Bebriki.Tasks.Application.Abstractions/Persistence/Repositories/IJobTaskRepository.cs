@@ -10,4 +10,12 @@ public interface IJobTaskRepository
     IAsyncEnumerable<long> AddAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken);
 
     Task UpdateAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken);
+
+    Task AddDependenciesAsync(
+        JobTaskDependenciesQuery query,
+        CancellationToken cancellationToken);
+
+    Task RemoveDependenciesAsync(
+        JobTaskDependenciesQuery query,
+        CancellationToken cancellationToken);
 }

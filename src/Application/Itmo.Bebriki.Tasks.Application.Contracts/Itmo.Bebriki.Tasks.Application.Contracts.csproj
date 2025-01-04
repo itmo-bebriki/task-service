@@ -28,6 +28,12 @@
       <Compile Update="JobTasks\Events\UpdateJobTaskEventConverter.cs">
         <DependentUpon>UpdateJobTaskEvent.cs</DependentUpon>
       </Compile>
+      <Compile Update="JobTasks\Events\AddJobTaskDependenciesEventConverter.cs">
+        <DependentUpon>AddJobTaskDependenciesEvent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="JobTasks\Events\RemoveJobTaskDependenciesEventConverter.cs">
+        <DependentUpon>RemoveJobTaskDependenciesEvent.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

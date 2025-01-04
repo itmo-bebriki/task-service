@@ -8,5 +8,4 @@ public sealed record UpdateJobTaskContext(
     JobTaskState? State = null,
     JobTaskPriority? Priority = null,
     DateTimeOffset? DeadLine = null,
-    long? DependOnTaskId = null,
     bool? IsAgreed = null);

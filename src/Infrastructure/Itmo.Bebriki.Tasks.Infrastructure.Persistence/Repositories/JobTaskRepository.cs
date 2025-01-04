@@ -164,20 +164,35 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             JobTask jobTask = jobTasks.ElementAt(i);
             long newJobTaskId = newJobTaskIds[i];
 
-            if (!jobTask.DependOnTasks.Any())
+            if (!jobTask.DependOnJobTaskIds.Any())
             {
                 continue;
             }
 
             await using IPersistenceCommand insertDependenciesCommand = connection.CreateCommand(insertDependenciesSql)
                 .AddParameter("job_task_id", newJobTaskId)
-                .AddParameter("depends_on_job_task_ids", jobTask.DependOnTasks.ToArray());
+                .AddParameter("depends_on_job_task_ids", jobTask.DependOnJobTaskIds.ToArray());
 
             await insertDependenciesCommand.ExecuteNonQueryAsync(cancellationToken);
         }
     }
 
     public Task UpdateAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken)
+    {
+        const string sql =
+        """
+
+        """;
+
+        throw new NotImplementedException();
+    }
+
+    public Task AddDependenciesAsync(JobTaskDependenciesQuery query, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveDependenciesAsync(JobTaskDependenciesQuery query, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

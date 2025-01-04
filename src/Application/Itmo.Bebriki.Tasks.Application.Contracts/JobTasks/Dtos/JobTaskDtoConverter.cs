@@ -13,23 +13,8 @@ public static class JobTaskDtoConverter
             jobTask.AssigneeId,
             jobTask.State,
             jobTask.Priority,
-            (IReadOnlyList<long>)jobTask.DependOnTasks,
+            jobTask.DependOnJobTaskIds,
             jobTask.DeadLine,
             jobTask.UpdatedAt);
     }
-
-    /*
-    public static JobTask ToDomain(this JobTaskDto dto)
-    {
-        return new JobTask(
-            dto.Id,
-            dto.Title,
-            dto.Description,
-            dto.AssigneeId,
-            dto.State,
-            dto.Priority,
-            dto.DependOnTasks,
-            dto.DeadLine,
-            dto.UpdatedAt);
-    }*/
 }

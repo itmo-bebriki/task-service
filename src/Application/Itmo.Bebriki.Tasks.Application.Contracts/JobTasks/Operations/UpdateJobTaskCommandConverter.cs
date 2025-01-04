@@ -13,7 +13,6 @@ public static class UpdateJobTaskCommandConverter
             AssigneeId: command.AssigneeId,
             State: command.State,
             Priority: command.Priority,
-            DeadLine: command.DeadLine,
-            DependOnTaskId: command.DependOnTaskId);
+            DeadLine: command.DeadLine);
     }
 }

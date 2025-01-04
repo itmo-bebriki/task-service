@@ -16,7 +16,7 @@ public sealed record JobTaskDto
 
     public JobTaskPriority Priority { get; }
 
-    public IReadOnlyList<long> DependOnTasks { get; }
+    public IReadOnlySet<long> DependOnTasks { get; }
 
     public DateTimeOffset? DeadLine { get; }
 
@@ -29,7 +29,7 @@ public sealed record JobTaskDto
         long assigneeId,
         JobTaskState state,
         JobTaskPriority priority,
-        IReadOnlyList<long> dependOnTasks,
+        IReadOnlySet<long> dependOnTasks,
         DateTimeOffset? deadLine,
         DateTimeOffset updateAt)
     {

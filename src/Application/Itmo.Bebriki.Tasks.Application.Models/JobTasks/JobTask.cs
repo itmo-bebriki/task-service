@@ -16,7 +16,7 @@ public sealed record JobTask
 
     public required JobTaskPriority Priority { get; init; }
 
-    public ISet<long> DependOnTasks { get; init; } = new HashSet<long>();
+    public IReadOnlySet<long> DependOnJobTaskIds { get; init; } = new HashSet<long>();
 
     public DateTimeOffset? DeadLine { get; init; }
 

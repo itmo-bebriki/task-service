@@ -10,22 +10,4 @@ public sealed record UpdateJobTaskCommand(
     JobTaskState? State = null,
     JobTaskPriority? Priority = null,
     DateTimeOffset? DeadLine = null,
-    long? DependOnTaskId = null)
-{
-    // public abstract record Result
-    // {
-    //     private Result() { }
-    //
-    //     public sealed record Success : Result;
-    //
-    //     public sealed record TaskNotFound : Result;
-    //
-    //     public sealed record TaskInvalidDeadline : Result;
-    //
-    //     public sealed record TaskPriorityInvalid : Result;
-    //
-    //     public sealed record TaskStateInvalid : Result;
-    //
-    //     public sealed record InvalidOperation(string Message) : Result;
-    // }
-}
+    bool? IsAgreed = null);

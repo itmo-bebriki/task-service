@@ -5,6 +5,6 @@ public sealed record CreateJobTaskContext(
     string? Description,
     long AssigneeId,
     JobTaskPriority Priority,
-    ISet<long> DependOnTasks,
+    IReadOnlySet<long> DependOnTasks,
     DateTimeOffset? DeadLine,
     DateTimeOffset CreatedAt);

@@ -1,10 +1,8 @@
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks;
-using SourceKit.Generators.Builder.Annotations;
 
-namespace Itmo.Bebriki.Tasks.Application.Abstractions.Persistence.Queries;
+namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 
-[GenerateBuilder]
-public sealed partial record JobTaskQuery(
+public sealed record QueryJobTaskCommand(
     long[] JobTaskIds,
     long[] AssigneeIds,
     JobTaskState[] States,
@@ -16,4 +14,4 @@ public sealed partial record JobTaskQuery(
     DateTimeOffset? FromUpdatedAt,
     DateTimeOffset? ToUpdatedAt,
     long? Cursor,
-    [RequiredValue] int PageSize);
+    int PageSize);

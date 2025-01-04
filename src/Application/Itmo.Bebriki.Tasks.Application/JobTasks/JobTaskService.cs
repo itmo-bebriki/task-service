@@ -59,8 +59,8 @@ public sealed class JobTaskService : IJobTaskService
         CreateJobTaskCommand command,
         CancellationToken cancellationToken)
     {
-        CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command);
-        JobTask jobTask = JobTaskFactory.CreateNew(context);
+        CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
+        JobTask jobTask = JobTaskFactory.CreateFromCreateContext(context);
 
         CreateJobTaskEvent createJobTaskEvent = CreateJobTaskEventConverter.ToEvent(jobTask);
 
@@ -96,7 +96,7 @@ public sealed class JobTaskService : IJobTaskService
         }
 
         UpdateJobTaskContext context = UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
-        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdate(jobTask, context);
+        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(jobTask, context);
 
         await _persistenceContext.JobTasks.UpdateAsync([updatedJobTask], cancellationToken);
     }

@@ -4,7 +4,7 @@ namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 
 public static class CreateJobTaskCommandConverter
 {
-    public static CreateJobTaskContext ToContext(CreateJobTaskCommand command)
+    public static CreateJobTaskContext ToContext(CreateJobTaskCommand command, DateTimeOffset createdAt)
     {
         var dependOnTasksSet = new HashSet<long>(command.DependOnTasks);
 
@@ -14,6 +14,7 @@ public static class CreateJobTaskCommandConverter
             AssigneeId: command.AssigneeId,
             Priority: command.Priority,
             DependOnTasks: dependOnTasksSet,
-            DeadLine: command.DeadLine);
+            DeadLine: command.DeadLine,
+            CreatedAt: createdAt);
     }
 }

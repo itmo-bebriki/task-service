@@ -35,8 +35,7 @@ builder.Services.AddPlatformBackgroundTasks(configurator => configurator
     .UseHangfireScheduling(hangfire => hangfire
         .ConfigureOptions(o => o.BindConfiguration("Infrastructure:BackgroundTasks:Scheduling:Hangfire"))
         .UsePostgresJobStorage())
-    .ConfigureExecution(builder.Configuration.GetSection("Infrastructure:BackgroundTasks:Execution"))
-    .AddApplicationBackgroundTasks());
+    .ConfigureExecution(builder.Configuration.GetSection("Infrastructure:BackgroundTasks:Execution")));
 
 builder.Services.AddPlatformEvents(b => b.AddPresentationKafkaHandlers());
 

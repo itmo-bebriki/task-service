@@ -4,7 +4,34 @@ namespace Itmo.Bebriki.Tasks.Application.Models.JobTasks;
 
 public static class JobTaskFactory
 {
-    public static JobTask CreateNew(CreateJobTaskContext context)
+    public static JobTask CreateNew(
+        long id,
+        string title,
+        string description,
+        long assigneeId,
+        JobTaskState state,
+        JobTaskPriority priority,
+        IReadOnlyCollection<long> dependsOnIds,
+        DateTimeOffset deadline,
+        bool isAgreed,
+        DateTimeOffset updatedAt)
+    {
+        return new JobTask
+        {
+            Id = id,
+            Title = title,
+            Description = description,
+            AssigneeId = assigneeId,
+            State = state,
+            Priority = priority,
+            DependOnTasks = (ISet<long>)dependsOnIds,
+            DeadLine = deadline,
+            IsAgreed = isAgreed,
+            UpdatedAt = updatedAt,
+        };
+    }
+
+    public static JobTask CreateFromCreateContext(CreateJobTaskContext context)
     {
         return new JobTask
         {
@@ -15,10 +42,11 @@ public static class JobTaskFactory
             Priority = context.Priority,
             DependOnTasks = context.DependOnTasks,
             DeadLine = context.DeadLine,
+            UpdatedAt = context.CreatedAt,
         };
     }
 
-    public static JobTask CreateFromUpdate(JobTask jobTask, UpdateJobTaskContext context)
+    public static JobTask CreateFromUpdateContext(JobTask jobTask, UpdateJobTaskContext context)
     {
         // TODO валидация состояний
         var updatedDependOnTasks = new HashSet<long>(jobTask.DependOnTasks);
@@ -30,6 +58,7 @@ public static class JobTaskFactory
 
         return new JobTask
         {
+            Id = jobTask.Id,
             Title = context.Title ?? jobTask.Title,
             Description = context.Description,
             AssigneeId = context.AssigneeId ?? jobTask.AssigneeId,

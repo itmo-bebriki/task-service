@@ -6,4 +6,5 @@ public sealed record CreateJobTaskContext(
     long AssigneeId,
     JobTaskPriority Priority,
     ISet<long> DependOnTasks,
-    DateTimeOffset? DeadLine);
+    DateTimeOffset? DeadLine,
+    DateTimeOffset CreatedAt);

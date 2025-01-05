@@ -1,11 +1,11 @@
 using Itmo.Bebriki.Tasks.Application.Abstractions.Persistence.Queries;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 
-namespace Itmo.Bebriki.Tasks.Application.Converters;
+namespace Itmo.Bebriki.Tasks.Application.Converters.Operations;
 
-public static class QueryJobTaskCommandConverter
+internal static class QueryJobTaskCommandConverter
 {
-    public static JobTaskQuery ToQuery(QueryJobTaskCommand command)
+    internal static JobTaskQuery ToQuery(QueryJobTaskCommand command)
     {
         return JobTaskQuery.Build(builder => builder
             .WithJobTaskIds(command.JobTaskIds)

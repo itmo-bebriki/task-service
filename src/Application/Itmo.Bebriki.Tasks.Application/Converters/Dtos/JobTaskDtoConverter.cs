@@ -1,10 +1,11 @@
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks;
 
-namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos;
+namespace Itmo.Bebriki.Tasks.Application.Converters.Dtos;
 
-public static class JobTaskDtoConverter
+internal static class JobTaskDtoConverter
 {
-    public static JobTaskDto ToDto(JobTask jobTask)
+    internal static JobTaskDto ToDto(JobTask jobTask)
     {
         return new JobTaskDto(
             jobTask.Id,

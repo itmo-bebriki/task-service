@@ -1,10 +1,11 @@
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
 
-namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
+namespace Itmo.Bebriki.Tasks.Application.Converters.Operations;
 
-public static class CreateJobTaskCommandConverter
+internal static class CreateJobTaskCommandConverter
 {
-    public static CreateJobTaskContext ToContext(CreateJobTaskCommand command, DateTimeOffset createdAt)
+    internal static CreateJobTaskContext ToContext(CreateJobTaskCommand command, DateTimeOffset createdAt)
     {
         return new CreateJobTaskContext(
             Title: command.Title,

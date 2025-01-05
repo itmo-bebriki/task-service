@@ -125,8 +125,25 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             source.dead_line,
             source.is_agreed,
             source.updated_at
-        from unnest(:titles, :descriptions, :assignee_ids, :states, :priorities, :deadlines, :is_agreeds, :updated_ats) 
-            as source(title, description, assignee_id, state, priority, dead_line, is_agreed, updated_at)
+        from unnest(
+            :titles,
+            :descriptions,
+            :assignee_ids,
+            :states,
+            :priorities,
+            :deadlines,
+            :is_agreeds,
+            :updated_ats
+        ) as source (
+            title,
+            description,
+            assignee_id,
+            state,
+            priority,
+            dead_line,
+            is_agreed,
+            updated_at
+        )
         returning jt.job_task_id;
         """;
 
@@ -177,23 +194,92 @@ internal sealed class JobTaskRepository : IJobTaskRepository
         }
     }
 
-    public Task UpdateAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken)
+    public async Task UpdateAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken)
     {
         const string sql =
         """
-
+        update job_tasks as jt
+        set
+            title = source.title,
+            description = source.description,
+            assignee_id = source.assignee_id,
+            state = source.state,
+            priority = source.priority,
+            dead_line = source.dead_line,
+            is_agreed = source.is_agreed,
+            updated_at = source.updated_at
+        from unnest(
+            :job_task_ids,
+            :titles,
+            :descriptions,
+            :assignee_ids,
+            :states,
+            :priorities,
+            :dead_lines,
+            :is_agreeds,
+            :updated_ats
+        ) as source (
+            job_task_id,
+            title,
+            description,
+            assignee_id,
+            state,
+            priority,
+            dead_line,
+            is_agreed,
+            updated_at
+        )
+        where jt.job_task_id = source.job_task_id;
         """;
 
-        throw new NotImplementedException();
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("job_task_ids", jobTasks.Select(t => t.Id))
+            .AddParameter("titles", jobTasks.Select(t => t.Title))
+            .AddParameter("descriptions", jobTasks.Select(t => t.Description))
+            .AddParameter("assignee_ids", jobTasks.Select(t => t.AssigneeId))
+            .AddParameter("states", jobTasks.Select(t => t.State))
+            .AddParameter("priorities", jobTasks.Select(t => t.Priority))
+            .AddParameter("dead_lines", jobTasks.Select(t => t.DeadLine))
+            .AddParameter("is_agreeds", jobTasks.Select(t => t.IsAgreed))
+            .AddParameter("updated_ats", jobTasks.Select(t => t.UpdatedAt));
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public Task AddDependenciesAsync(JobTaskDependenciesQuery query, CancellationToken cancellationToken)
+    public async Task AddDependenciesAsync(JobTaskDependenciesQuery query, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string sql =
+        """
+        insert into job_task_dependencies (job_task_id, depends_on_job_task_id)
+        select :job_task_id, unnest(:depends_on_job_task_ids);
+        """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("job_task_id", query.JobTaskId)
+            .AddParameter("depends_on_job_task_ids", query.DependOnIds);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public Task RemoveDependenciesAsync(JobTaskDependenciesQuery query, CancellationToken cancellationToken)
+    public async Task RemoveDependenciesAsync(JobTaskDependenciesQuery query, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string sql =
+        """
+        delete from job_task_dependencies as jtd
+        where jtd.job_task_id = :job_task_id
+            and jtd.depends_on_job_task_id = any(:depends_on_job_task_ids);
+        """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("job_task_id", query.JobTaskId)
+            .AddParameter("depends_on_job_task_ids", query.DependOnIds);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 }

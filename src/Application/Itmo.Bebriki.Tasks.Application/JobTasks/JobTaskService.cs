@@ -79,7 +79,6 @@ public sealed class JobTaskService : IJobTaskService
         CreateJobTaskCommand command,
         CancellationToken cancellationToken)
     {
-        // TODO проверка на циклические зависимости
         CheckJobTaskDependencies();
 
         CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);

@@ -282,4 +282,71 @@ internal sealed class JobTaskRepository : IJobTaskRepository
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
+
+    public async IAsyncEnumerable<JobTask> GetDependentJobTasksAsync(
+        DependentJobTaskQuery query,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        const string sql =
+        """
+        with recursive dependency_tree as (
+            select
+                jtd.job_task_id
+            from job_task_dependencies as jtd
+            where jtd.depends_on_job_task_id = any(:depends_on_task_ids)
+        
+            union all
+        
+            select
+                jtd1.job_task_id
+            from job_task_dependencies as jtd1
+            join dependency_tree dt on jtd1.depends_on_job_task_id = dt.job_task_id
+        ),
+        aggregated_dependencies as (
+            select
+                jtd.job_task_id,
+                array_agg(jtd.depends_on_job_task_id) as depends_on_ids
+            from job_task_dependencies as jtd
+            group by jtd.job_task_id
+        )
+        select
+            jt.job_task_id,
+            jt.title,
+            jt.description,
+            jt.assignee_id,
+            jt.state,
+            jt.priority,
+            jt.dead_line,
+            jt.is_agreed,
+            jt.updated_at,
+            coalesce(ad.depends_on_ids, '{}') as depends_on_ids
+        from job_tasks as jt
+        left join aggregated_dependencies ad
+            on jt.job_task_id = ad.job_task_id
+        where (cardinality(:depends_on_task_ids) = 0
+                    or jt.job_task_id in (select job_task_id from dependency_tree));
+        """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("depends_on_task_ids", query.JobTaskIds.ToArray());
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            yield return JobTaskFactory.CreateNew(
+                id: reader.GetInt64("job_task_id"),
+                title: reader.GetString("title"),
+                description: reader.GetString("description"),
+                assigneeId: reader.GetInt64("assignee_id"),
+                state: reader.GetFieldValue<JobTaskState>("state"),
+                priority: reader.GetFieldValue<JobTaskPriority>("priority"),
+                dependsOnIds: reader.GetFieldValue<long[]>("depends_on_ids"),
+                deadline: reader.GetFieldValue<DateTimeOffset?>("deadline"),
+                isAgreed: reader.GetBoolean("is_agreed"),
+                updatedAt: reader.GetFieldValue<DateTimeOffset>("updated_at"));
+        }
+    }
 }

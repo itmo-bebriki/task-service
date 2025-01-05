@@ -5,11 +5,17 @@ namespace Itmo.Bebriki.Tasks.Application.Abstractions.Persistence.Repositories;
 
 public interface IJobTaskRepository
 {
-    IAsyncEnumerable<JobTask> QueryAsync(JobTaskQuery query, CancellationToken cancellationToken);
+    IAsyncEnumerable<JobTask> QueryAsync(
+        JobTaskQuery query,
+        CancellationToken cancellationToken);
 
-    IAsyncEnumerable<long> AddAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken);
+    IAsyncEnumerable<long> AddAsync(
+        IReadOnlyCollection<JobTask> jobTasks,
+        CancellationToken cancellationToken);
 
-    Task UpdateAsync(IReadOnlyCollection<JobTask> jobTasks, CancellationToken cancellationToken);
+    Task UpdateAsync(
+        IReadOnlyCollection<JobTask> jobTasks,
+        CancellationToken cancellationToken);
 
     Task AddDependenciesAsync(
         JobTaskDependenciesQuery query,
@@ -17,5 +23,9 @@ public interface IJobTaskRepository
 
     Task RemoveDependenciesAsync(
         JobTaskDependenciesQuery query,
+        CancellationToken cancellationToken);
+
+    IAsyncEnumerable<JobTask> GetDependentJobTasksAsync(
+        DependentJobTaskQuery query,
         CancellationToken cancellationToken);
 }

@@ -7,5 +7,5 @@ public sealed record CreateJobTaskCommand(
     string? Description,
     long AssigneeId,
     JobTaskPriority Priority,
-    IReadOnlyList<long> DependOnTasks,
+    IReadOnlySet<long> DependOnTasks,
     DateTimeOffset? DeadLine);

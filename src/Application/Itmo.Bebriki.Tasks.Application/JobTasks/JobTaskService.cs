@@ -79,8 +79,6 @@ public sealed class JobTaskService : IJobTaskService
         CreateJobTaskCommand command,
         CancellationToken cancellationToken)
     {
-        CheckJobTaskDependencies();
-
         CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask jobTask = JobTaskFactory.CreateFromCreateContext(context);
 
@@ -154,7 +152,7 @@ public sealed class JobTaskService : IJobTaskService
         SetJobTaskDependenciesCommand command,
         CancellationToken cancellationToken)
     {
-        CheckJobTaskDependencies();
+        await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
 
         var jobTaskDependenciesQuery = JobTaskDependenciesQuery.Build(builder => builder
             .WithJobTaskId(command.JobTaskId)
@@ -186,7 +184,7 @@ public sealed class JobTaskService : IJobTaskService
         SetJobTaskDependenciesCommand command,
         CancellationToken cancellationToken)
     {
-        CheckJobTaskDependencies();
+        await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
 
         var jobTaskDependenciesQuery = JobTaskDependenciesQuery.Build(builder => builder
             .WithJobTaskId(command.JobTaskId)
@@ -214,8 +212,24 @@ public sealed class JobTaskService : IJobTaskService
         }
     }
 
-    private void CheckJobTaskDependencies()
+    private async Task CheckForCyclicDependencyAsync(
+        long jobTaskId,
+        IReadOnlySet<long> dependOnJobTaskIds,
+        CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var query = DependentJobTaskQuery.Build(builder => builder.WithJobTaskId(jobTaskId));
+
+        List<JobTask> dependentJobTasks = await _persistenceContext.JobTasks
+            .GetDependentJobTasksAsync(query, cancellationToken)
+            .ToListAsync(cancellationToken);
+
+        foreach (JobTask jobTask in dependentJobTasks)
+        {
+            if (dependOnJobTaskIds.Contains(jobTask.Id))
+            {
+                throw new JobTaskCyclicDependencyException(
+                    $"Cyclic relationship between job tasks found: {jobTaskId} and {jobTask.Id}");
+            }
+        }
     }
 }

@@ -20,6 +20,8 @@ public sealed record JobTaskDto
 
     public DateTimeOffset? DeadLine { get; }
 
+    public bool IsAgreed { get; }
+
     public DateTimeOffset UpdatedAt { get; }
 
     public JobTaskDto(
@@ -31,6 +33,7 @@ public sealed record JobTaskDto
         JobTaskPriority priority,
         IReadOnlySet<long> dependOnTasks,
         DateTimeOffset? deadLine,
+        bool isAgreed,
         DateTimeOffset updateAt)
     {
         // TODO валидация
@@ -42,6 +45,7 @@ public sealed record JobTaskDto
         Priority = priority;
         DependOnTasks = dependOnTasks;
         DeadLine = deadLine;
+        IsAgreed = isAgreed;
         UpdatedAt = updateAt;
     }
 }

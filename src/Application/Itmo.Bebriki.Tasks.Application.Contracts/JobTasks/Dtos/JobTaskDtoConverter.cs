@@ -15,6 +15,7 @@ public static class JobTaskDtoConverter
             jobTask.Priority,
             jobTask.DependOnJobTaskIds,
             jobTask.DeadLine,
+            jobTask.IsAgreed,
             jobTask.UpdatedAt);
     }
 }

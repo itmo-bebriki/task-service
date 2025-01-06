@@ -14,10 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="protos\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\Application\Itmo.Bebriki.Tasks.Application.Contracts\Itmo.Bebriki.Tasks.Application.Contracts.csproj" />
     </ItemGroup>
 

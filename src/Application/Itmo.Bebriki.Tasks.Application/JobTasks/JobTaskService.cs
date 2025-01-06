@@ -13,30 +13,33 @@ using Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
 using Itmo.Dev.Platform.Common.DateTime;
 using Itmo.Dev.Platform.Events;
 using Itmo.Dev.Platform.Persistence.Abstractions.Transactions;
+using Microsoft.Extensions.Logging;
 using System.Data;
 
 namespace Itmo.Bebriki.Tasks.Application.JobTasks;
 
-public sealed class JobTaskService : IJobTaskService
+internal sealed class JobTaskService : IJobTaskService
 {
     private readonly IPersistenceContext _persistenceContext;
     private readonly IPersistenceTransactionProvider _transactionProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IEventPublisher _eventPublisher;
+    private readonly ILogger<JobTaskService> _logger;
 
     public JobTaskService(
         IPersistenceContext persistenceContext,
         IPersistenceTransactionProvider transactionProvider,
         IDateTimeProvider dateTimeProvider,
-        IEventPublisher eventPublisher)
+        IEventPublisher eventPublisher,
+        ILogger<JobTaskService> logger)
     {
         _persistenceContext = persistenceContext;
         _transactionProvider = transactionProvider;
         _dateTimeProvider = dateTimeProvider;
         _eventPublisher = eventPublisher;
+        _logger = logger;
     }
 
-    // TODO возможно убрать из-за наличия QueryJobTasksAsync
     public async Task<JobTaskDto> GetJobTaskByIdAsync(
         GetJobTaskCommand command,
         CancellationToken cancellationToken)
@@ -51,6 +54,7 @@ public sealed class JobTaskService : IJobTaskService
 
         if (jobTask is null)
         {
+            _logger.LogWarning($"Job task with id {command.JobTaskId} not found.");
             throw new JobTaskNotFoundException($"Job task with id {command.JobTaskId} not found.");
         }
 
@@ -90,20 +94,32 @@ public sealed class JobTaskService : IJobTaskService
 
         try
         {
-            long newId = await _persistenceContext.JobTasks
+            long jobTaskId = await _persistenceContext.JobTasks
                 .AddAsync([jobTask], cancellationToken)
                 .FirstAsync(cancellationToken);
 
-            CreateJobTaskEvent createJobTaskEvent = CreateJobTaskEventConverter.ToEvent(newId, jobTask);
+            CreateJobTaskEvent createJobTaskEvent = CreateJobTaskEventConverter.ToEvent(jobTaskId, jobTask);
 
             await _eventPublisher.PublishAsync(createJobTaskEvent, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 
-            return newId;
+            return jobTaskId;
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(
+                ex,
+                "Failed to create job task. JobTaskId: {JobTaskId}, Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, IsAgreed: {IsAgreed}, DependOnTaskIds: {DependOnTaskIds}",
+                jobTask.Id,
+                jobTask.Title,
+                jobTask.AssigneeId,
+                jobTask.State,
+                jobTask.Priority,
+                jobTask.DeadLine,
+                jobTask.IsAgreed,
+                string.Join(", ", jobTask.DependOnJobTaskIds));
+
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
@@ -123,6 +139,7 @@ public sealed class JobTaskService : IJobTaskService
 
         if (jobTask is null)
         {
+            _logger.LogWarning($"Job task with id {command.JobTaskId} not found.");
             throw new JobTaskNotFoundException($"Job task with id {command.JobTaskId} not found.");
         }
 
@@ -143,8 +160,14 @@ public sealed class JobTaskService : IJobTaskService
 
             await transaction.CommitAsync(cancellationToken);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(
+                ex,
+                "Failed to update job task. JobTaskId: {JobTaskId}, Updated Fields: {UpdatedFields}",
+                updatedJobTask.Id,
+                GetUpdatedFields(context));
+
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
@@ -175,8 +198,14 @@ public sealed class JobTaskService : IJobTaskService
 
             await transaction.CommitAsync(cancellationToken);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(
+                ex,
+                "Failed to add dependencies to job task. JobTaskId: {JobTaskId}, Dependencies: {Dependencies}",
+                command.JobTaskId,
+                string.Join(", ", command.DependOnJobTaskIds));
+
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
@@ -207,11 +236,32 @@ public sealed class JobTaskService : IJobTaskService
 
             await transaction.CommitAsync(cancellationToken);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(
+                ex,
+                "Failed to remove dependencies from job task. JobTaskId: {JobTaskId}, Dependencies: {Dependencies}",
+                command.JobTaskId,
+                string.Join(", ", command.DependOnJobTaskIds));
+
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
+    }
+
+    private static string GetUpdatedFields(UpdateJobTaskContext context)
+    {
+        var updatedFields = new List<string>();
+
+        if (context.Title != null) updatedFields.Add(nameof(context.Title));
+        if (context.Description != null) updatedFields.Add(nameof(context.Description));
+        if (context.AssigneeId != null) updatedFields.Add(nameof(context.AssigneeId));
+        if (context.State != null) updatedFields.Add(nameof(context.State));
+        if (context.Priority != null) updatedFields.Add(nameof(context.Priority));
+        if (context.DeadLine != null) updatedFields.Add(nameof(context.DeadLine));
+        if (context.IsAgreed != null) updatedFields.Add(nameof(context.IsAgreed));
+
+        return updatedFields.Any() ? string.Join(", ", updatedFields) : "None";
     }
 
     private async Task CheckForCyclicDependencyAsync(
@@ -229,6 +279,7 @@ public sealed class JobTaskService : IJobTaskService
         {
             if (dependOnJobTaskIds.Contains(jobTask.Id))
             {
+                _logger.LogWarning($"Cyclic relationship between job tasks found: {jobTaskId} and {jobTask.Id}");
                 throw new JobTaskCyclicDependencyException(
                     $"Cyclic relationship between job tasks found: {jobTaskId} and {jobTask.Id}");
             }

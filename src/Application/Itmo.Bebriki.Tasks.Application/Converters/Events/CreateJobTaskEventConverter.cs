@@ -5,9 +5,15 @@ namespace Itmo.Bebriki.Tasks.Application.Converters.Events;
 
 internal static class CreateJobTaskEventConverter
 {
-    internal static CreateJobTaskEvent ToEvent(JobTask jobTask)
+    internal static CreateJobTaskEvent ToEvent(long jobTaskId, JobTask jobTask)
     {
-        // TODO
-        return new CreateJobTaskEvent();
+        return new CreateJobTaskEvent(
+            JobTaskId: jobTaskId,
+            Title: jobTask.Title,
+            Description: jobTask.Description,
+            AssigneeId: jobTask.AssigneeId,
+            Priority: jobTask.Priority,
+            DependOnTasks: jobTask.DependOnJobTaskIds,
+            DeadLine: jobTask.DeadLine);
     }
 }

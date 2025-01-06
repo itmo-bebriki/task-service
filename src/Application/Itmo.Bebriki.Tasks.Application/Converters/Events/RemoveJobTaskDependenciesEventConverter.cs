@@ -4,9 +4,8 @@ namespace Itmo.Bebriki.Tasks.Application.Converters.Events;
 
 internal static class RemoveJobTaskDependenciesEventConverter
 {
-    internal static RemoveJobTaskDependenciesEvent ToEvent(long jobTaskId, IReadOnlyCollection<long> dependencies)
+    internal static RemoveJobTaskDependenciesEvent ToEvent(long jobTaskId, IReadOnlySet<long> dependOnJobTaskIds)
     {
-        // TODO
-        return new RemoveJobTaskDependenciesEvent();
+        return new RemoveJobTaskDependenciesEvent(jobTaskId, dependOnJobTaskIds);
     }
 }

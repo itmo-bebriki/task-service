@@ -7,7 +7,14 @@ internal static class UpdateJobTaskEventConverter
 {
     internal static UpdateJobTaskEvent ToEvent(JobTask jobTask)
     {
-        // TODO
-        return new UpdateJobTaskEvent();
+        return new UpdateJobTaskEvent(
+            JobTaskId: jobTask.Id,
+            Title: jobTask.Title,
+            Description: jobTask.Description,
+            AssigneeId: jobTask.AssigneeId,
+            State: jobTask.State,
+            Priority: jobTask.Priority,
+            DeadLine: jobTask.DeadLine,
+            IsAgreed: jobTask.IsAgreed);
     }
 }

@@ -84,8 +84,6 @@ public sealed class JobTaskService : IJobTaskService
         CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask jobTask = JobTaskFactory.CreateFromCreateContext(context);
 
-        CreateJobTaskEvent createJobTaskEvent = CreateJobTaskEventConverter.ToEvent(jobTask);
-
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
             cancellationToken);
@@ -95,6 +93,8 @@ public sealed class JobTaskService : IJobTaskService
             long newId = await _persistenceContext.JobTasks
                 .AddAsync([jobTask], cancellationToken)
                 .FirstAsync(cancellationToken);
+
+            CreateJobTaskEvent createJobTaskEvent = CreateJobTaskEventConverter.ToEvent(newId, jobTask);
 
             await _eventPublisher.PublishAsync(createJobTaskEvent, cancellationToken);
 

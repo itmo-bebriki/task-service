@@ -14,6 +14,7 @@ internal static class UpdateJobTaskCommandConverter
             AssigneeId: command.AssigneeId,
             State: command.State,
             Priority: command.Priority,
-            DeadLine: command.DeadLine);
+            DeadLine: command.DeadLine,
+            IsAgreed: command.IsAgreed);
     }
 }

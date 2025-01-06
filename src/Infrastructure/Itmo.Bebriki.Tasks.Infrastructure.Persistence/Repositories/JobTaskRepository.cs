@@ -166,14 +166,13 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             .AddParameter("updated_ats", jobTasks.Select(t => t.UpdatedAt));
 
         var newJobTaskIds = new List<long>();
-        await using DbDataReader reader = await insertTaskCommand.ExecuteReaderAsync(cancellationToken);
 
-        while (await reader.ReadAsync(cancellationToken))
+        await using (DbDataReader reader = await insertTaskCommand.ExecuteReaderAsync(cancellationToken))
         {
-            long jobTaskId = reader.GetInt64(0);
-            newJobTaskIds.Add(jobTaskId);
-
-            yield return jobTaskId;
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                newJobTaskIds.Add(reader.GetInt64(0));
+            }
         }
 
         for (int i = 0; i < jobTasks.Count; i++)
@@ -191,6 +190,11 @@ internal sealed class JobTaskRepository : IJobTaskRepository
                 .AddParameter("depends_on_job_task_ids", jobTask.DependOnJobTaskIds.ToArray());
 
             await insertDependenciesCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        foreach (long jobTaskId in newJobTaskIds)
+        {
+            yield return jobTaskId;
         }
     }
 

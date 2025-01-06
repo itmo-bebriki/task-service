@@ -87,7 +87,7 @@ message RemoveJobTaskDependenciesResponse { }
 message JobTaskDto {
   int64 job_task_id = 1;
   string title = 2;
-  google.protobuf.StringValue description = 3;
+  string description = 3;
   int64 assignee_id = 4;
   JobTaskState state = 5;
   JobTaskPriority priority = 6;

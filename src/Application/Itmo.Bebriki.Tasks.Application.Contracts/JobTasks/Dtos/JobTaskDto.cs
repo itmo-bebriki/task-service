@@ -8,7 +8,7 @@ public sealed record JobTaskDto
 
     public string Title { get; }
 
-    public string? Description { get; }
+    public string Description { get; }
 
     public long AssigneeId { get; }
 
@@ -18,7 +18,7 @@ public sealed record JobTaskDto
 
     public IReadOnlySet<long> DependOnTasks { get; }
 
-    public DateTimeOffset? DeadLine { get; }
+    public DateTimeOffset DeadLine { get; }
 
     public bool IsAgreed { get; }
 
@@ -27,12 +27,12 @@ public sealed record JobTaskDto
     public JobTaskDto(
         long id,
         string title,
-        string? description,
+        string description,
         long assigneeId,
         JobTaskState state,
         JobTaskPriority priority,
         IReadOnlySet<long> dependOnTasks,
-        DateTimeOffset? deadLine,
+        DateTimeOffset deadLine,
         bool isAgreed,
         DateTimeOffset updateAt)
     {

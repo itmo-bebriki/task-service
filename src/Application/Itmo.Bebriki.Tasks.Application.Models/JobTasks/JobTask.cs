@@ -8,7 +8,7 @@ public sealed record JobTask
 
     required public string Title { get; init; }
 
-    public string? Description { get; init; }
+    required public string Description { get; init; }
 
     required public long AssigneeId { get; init; }
 
@@ -18,7 +18,7 @@ public sealed record JobTask
 
     public IReadOnlySet<long> DependOnJobTaskIds { get; init; } = new HashSet<long>();
 
-    public DateTimeOffset? DeadLine { get; init; }
+    required public DateTimeOffset DeadLine { get; init; }
 
     public bool IsAgreed { get; init; }
 

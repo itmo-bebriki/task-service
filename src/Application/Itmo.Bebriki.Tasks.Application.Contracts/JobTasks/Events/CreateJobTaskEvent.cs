@@ -6,8 +6,8 @@ namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Events;
 public sealed record CreateJobTaskEvent(
     long JobTaskId,
     string Title,
-    string? Description,
+    string Description,
     long AssigneeId,
     JobTaskPriority Priority,
     IReadOnlySet<long> DependOnTasks,
-    DateTimeOffset? DeadLine) : IEvent;
+    DateTimeOffset DeadLine) : IEvent;

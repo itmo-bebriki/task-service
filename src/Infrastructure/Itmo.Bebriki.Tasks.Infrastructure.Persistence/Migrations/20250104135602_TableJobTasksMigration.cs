@@ -14,11 +14,11 @@ public sealed class TableJobTasksMigration : SqlMigration
         create table job_tasks (
             job_task_id bigint primary key generated always as identity,
             title text not null,
-            description text,
+            description text not null,
             assignee_id bigint not null,
             state job_task_state not null,
             priority job_task_priority not null,
-            dead_line timestamp with time zone,
+            dead_line timestamp with time zone not null,
             is_agreed boolean not null default false,
             updated_at timestamp with time zone not null
         );

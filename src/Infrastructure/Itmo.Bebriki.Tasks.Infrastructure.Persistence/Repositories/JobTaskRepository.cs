@@ -102,7 +102,7 @@ internal sealed class JobTaskRepository : IJobTaskRepository
                 state: reader.GetFieldValue<JobTaskState>("state"),
                 priority: reader.GetFieldValue<JobTaskPriority>("priority"),
                 dependsOnIds: reader.GetFieldValue<long[]>("depends_on_ids"),
-                deadline: reader.GetFieldValue<DateTimeOffset?>("deadline"),
+                deadline: reader.GetFieldValue<DateTimeOffset>("deadline"),
                 isAgreed: reader.GetBoolean("is_agreed"),
                 updatedAt: reader.GetFieldValue<DateTimeOffset>("updated_at"));
         }
@@ -344,7 +344,7 @@ internal sealed class JobTaskRepository : IJobTaskRepository
                 state: reader.GetFieldValue<JobTaskState>("state"),
                 priority: reader.GetFieldValue<JobTaskPriority>("priority"),
                 dependsOnIds: reader.GetFieldValue<long[]>("depends_on_ids"),
-                deadline: reader.GetFieldValue<DateTimeOffset?>("deadline"),
+                deadline: reader.GetFieldValue<DateTimeOffset>("deadline"),
                 isAgreed: reader.GetBoolean("is_agreed"),
                 updatedAt: reader.GetFieldValue<DateTimeOffset>("updated_at"));
         }

@@ -17,7 +17,7 @@ internal static class JobTaskDtoConverter
             State = JobTaskStateConverter.FromInternal(internalDto.State),
             Priority = JobTaskPriorityConverter.FromInternal(internalDto.Priority),
             DependOnTaskIds = { internalDto.DependOnTasks.ToArray() },
-            DeadLine = internalDto.DeadLine is null ? null : Timestamp.FromDateTimeOffset(internalDto.DeadLine.Value),
+            DeadLine = Timestamp.FromDateTimeOffset(internalDto.DeadLine),
             IsAgreed = internalDto.IsAgreed,
             UpdatedAt = Timestamp.FromDateTimeOffset(internalDto.UpdatedAt),
         };

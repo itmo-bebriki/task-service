@@ -12,7 +12,7 @@ public static class JobTaskFactory
         JobTaskState state,
         JobTaskPriority priority,
         IReadOnlyCollection<long> dependsOnIds,
-        DateTimeOffset? deadline,
+        DateTimeOffset deadline,
         bool isAgreed,
         DateTimeOffset updatedAt)
     {
@@ -53,7 +53,7 @@ public static class JobTaskFactory
         {
             Id = jobTask.Id,
             Title = context.Title ?? jobTask.Title,
-            Description = context.Description,
+            Description = context.Description ?? jobTask.Description,
             AssigneeId = context.AssigneeId ?? jobTask.AssigneeId,
             State = context.State ?? jobTask.State,
             Priority = context.Priority ?? jobTask.Priority,

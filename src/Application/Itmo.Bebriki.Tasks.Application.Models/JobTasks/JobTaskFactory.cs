@@ -24,7 +24,7 @@ public static class JobTaskFactory
             AssigneeId = assigneeId,
             State = state,
             Priority = priority,
-            DependOnJobTaskIds = (IReadOnlySet<long>)dependsOnIds,
+            DependOnJobTaskIds = new HashSet<long>(dependsOnIds),
             DeadLine = deadline,
             IsAgreed = isAgreed,
             UpdatedAt = updatedAt,

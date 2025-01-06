@@ -42,7 +42,7 @@ message QueryJobTaskRequest {
 
 message CreateJobTaskRequest {
   string title = 1;
-  google.protobuf.StringValue description = 2;
+  string description = 2;
   int64 assignee_id = 3;
   JobTaskPriority priority = 4;
   repeated int64 depend_on_task_ids = 5;

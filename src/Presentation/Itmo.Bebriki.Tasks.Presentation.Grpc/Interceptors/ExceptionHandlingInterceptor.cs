@@ -37,7 +37,7 @@ public sealed class ExceptionHandlingInterceptor : Interceptor
             JobTaskNotFoundException => new RpcException(new Status(StatusCode.NotFound, exception.Message)),
             JobTaskCyclicDependencyException => new RpcException(new Status(StatusCode.InvalidArgument, exception.Message)),
             ArgumentOutOfRangeException => new RpcException(new Status(StatusCode.InvalidArgument, exception.Message)),
-            _ => new RpcException(new Status(StatusCode.Internal, exception.Message)),
+            _ => new RpcException(new Status(StatusCode.Internal, "Internal Server Error")),
         };
     }
 }

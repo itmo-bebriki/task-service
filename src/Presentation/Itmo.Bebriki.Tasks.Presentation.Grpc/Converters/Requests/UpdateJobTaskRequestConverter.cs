@@ -15,7 +15,7 @@ internal static class UpdateJobTaskRequestConverter
             AssigneeId: request.AssigneeId,
             State: request.State == JobTaskState.Unspecified ? null : JobTaskStateConverter.ToInternal(request.State),
             Priority: request.Priority == JobTaskPriority.Unspecified ? null : JobTaskPriorityConverter.ToInternal(request.Priority),
-            DeadLine: request.DeadLine.ToDateTimeOffset(),
+            DeadLine: request.DeadLine?.ToDateTimeOffset(),
             IsAgreed: request.IsAgreed);
     }
 }

@@ -6,19 +6,19 @@ public sealed record JobTask
 
     public long Id { get; init; }
 
-    required public string Title { get; init; }
+    public required string Title { get; init; }
 
-    required public string Description { get; init; }
+    public required string Description { get; init; }
 
-    required public long AssigneeId { get; init; }
+    public required long AssigneeId { get; init; }
 
-    required public JobTaskState State { get; init; }
+    public required JobTaskState State { get; init; }
 
-    required public JobTaskPriority Priority { get; init; }
+    public required JobTaskPriority Priority { get; init; }
 
     public IReadOnlySet<long> DependOnJobTaskIds { get; init; } = new HashSet<long>();
 
-    required public DateTimeOffset DeadLine { get; init; }
+    public required DateTimeOffset DeadLine { get; init; }
 
     public bool IsAgreed { get; init; }
 

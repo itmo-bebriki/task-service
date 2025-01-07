@@ -9,8 +9,8 @@ public static class ServiceCollectionExtensions
     {
         collection.AddGrpc(grpc =>
         {
-            grpc.Interceptors.Add<ExceptionHandlingInterceptor>();
             grpc.Interceptors.Add<ValidationInterceptor>();
+            grpc.Interceptors.Add<ExceptionHandlingInterceptor>();
         });
         collection.AddGrpcReflection();
 

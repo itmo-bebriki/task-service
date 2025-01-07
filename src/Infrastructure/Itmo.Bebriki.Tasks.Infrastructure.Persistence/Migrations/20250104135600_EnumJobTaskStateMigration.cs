@@ -14,7 +14,7 @@ public sealed class EnumJobTaskState : SqlMigration
         create type job_task_state as enum (
             'none',
             'backlog',
-            'todo',
+            'to_do',
             'in_progress',
             'in_review',
             'done',

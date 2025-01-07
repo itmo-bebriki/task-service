@@ -5,6 +5,7 @@ namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Events;
 
 public sealed record UpdateJobTaskEvent(
     long JobTaskId,
+    DateTimeOffset UpdateAt,
     string? Title = null,
     string? Description = null,
     long? AssigneeId = null,

@@ -5,16 +5,17 @@ namespace Itmo.Bebriki.Tasks.Application.Converters.Events;
 
 internal static class UpdateJobTaskEventConverter
 {
-    internal static UpdateJobTaskEvent ToEvent(JobTask jobTask)
+    internal static UpdateJobTaskEvent ToEvent(JobTask jobTask, JobTask updatedJobTask)
     {
         return new UpdateJobTaskEvent(
-            JobTaskId: jobTask.Id,
-            Title: jobTask.Title,
-            Description: jobTask.Description,
-            AssigneeId: jobTask.AssigneeId,
-            State: jobTask.State,
-            Priority: jobTask.Priority,
-            DeadLine: jobTask.DeadLine,
-            IsAgreed: jobTask.IsAgreed);
+            JobTaskId: updatedJobTask.Id,
+            UpdateAt: updatedJobTask.UpdatedAt,
+            Title: jobTask.Title == updatedJobTask.Title ? null : updatedJobTask.Title,
+            Description: jobTask.Description == updatedJobTask.Description ? null : updatedJobTask.Description,
+            AssigneeId: jobTask.AssigneeId == updatedJobTask.AssigneeId ? null : updatedJobTask.AssigneeId,
+            State: jobTask.State == updatedJobTask.State ? null : updatedJobTask.State,
+            Priority: jobTask.Priority == updatedJobTask.Priority ? null : updatedJobTask.Priority,
+            DeadLine: jobTask.DeadLine == updatedJobTask.DeadLine ? null : updatedJobTask.DeadLine,
+            IsAgreed: jobTask.IsAgreed == updatedJobTask.IsAgreed ? null : updatedJobTask.IsAgreed);
     }
 }

@@ -41,6 +41,7 @@ internal static class JobTaskInfoConverter
                     : JobTaskPriorityConverter.FromInternal(evt.Priority.Value),
                 DeadLine = evt.DeadLine?.ToTimestamp(),
                 IsAgreed = evt.IsAgreed,
+                UpdatedAt = evt.UpdateAt.ToTimestamp(),
             },
         };
     }

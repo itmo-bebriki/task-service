@@ -148,7 +148,7 @@ internal sealed class JobTaskService : IJobTaskService
         UpdateJobTaskContext context = UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(jobTask, context);
 
-        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(updatedJobTask);
+        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,

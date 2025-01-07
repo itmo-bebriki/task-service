@@ -38,6 +38,7 @@ message JobTaskInfoValue {
     JobTaskPriority priority = 6;
     google.protobuf.Timestamp dead_line = 7;
     google.protobuf.BoolValue is_agreed = 8;
+    google.protobuf.Timestamp updated_at = 9;
   }
 
   message JobTaskDependenciesAdded {

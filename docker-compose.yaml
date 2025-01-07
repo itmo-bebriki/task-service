@@ -14,5 +14,77 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: unless-stopped
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - task-service-network
+    volumes:
+      - task-service-zookeeper_data:/data
+  
+  kafka:
+    image: wurstmeister/kafka:latest
+    restart: unless-stopped
+    environment:
+      KAFKA_LOG_DIRS: /kafka-data
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: EXTERNAL://:9092,INTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://127.0.0.1:8001,INTERNAL://kafka:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CREATE_TOPICS: >
+        job_task_processing:1:1,
+        job_task_info:1:1,
+    depends_on:
+      - zookeeper
+    networks:
+      - task-service-network
+    volumes:
+      - task-service-kafka-data:/kafka-data
+    ports:
+      - '8001:9092'
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    networks:
+      - task-service-network
+    ports:
+      - "8003:8080"
+    volumes:
+      - ./src/Presentation/Itmo.Bebriki.Tasks.Presentation.Kafka/protos:/schemas
+    environment:
+      kafka.clusters.0.name: kafka
+      kafka.clusters.0.bootstrapServers: kafka:9094
+      kafka.clusters.0.defaultKeySerde: ProtobufFile
+      kafka.clusters.0.defaultValueSerde: ProtobufFile
+      
+      kafka.clusters.0.serde.0.name: ProtobufFile
+      kafka.clusters.0.serde.0.properties.protobufFilesDir: /schemas/
+      
+      kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.job_task_processing: itmo.bebriki.tasks.kafka.JobTaskProcessingKey
+      kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.job_task_info: itmo.bebriki.tasks.kafka.JobTaskInfoKey
+      
+      kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.job_task_processing: itmo.bebriki.tasks.kafka.JobTaskProcessingValue
+      kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.job_task_info: itmo.bebriki.tasks.kafka.JobTaskInfoValue
+
+networks:
+  task-service-network:
+    driver: bridge
+
 volumes:
   pg_data:
+  task-service-zookeeper_data:
+  task-service-kafka-data:

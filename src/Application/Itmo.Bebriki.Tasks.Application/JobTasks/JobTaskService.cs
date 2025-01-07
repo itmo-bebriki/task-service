@@ -69,12 +69,12 @@ internal sealed class JobTaskService : IJobTaskService
     {
         JobTaskQuery jobTaskQuery = QueryJobTaskCommandConverter.ToQuery(command);
 
-        List<JobTaskDto> jobTaskDtos = await _persistenceContext.JobTasks
+        HashSet<JobTaskDto> jobTaskDtos = await _persistenceContext.JobTasks
             .QueryAsync(jobTaskQuery, cancellationToken)
             .Select(JobTaskDtoConverter.ToDto)
-            .ToListAsync(cancellationToken);
+            .ToHashSetAsync(cancellationToken);
 
-        long? cursor = jobTaskDtos.Count == command.PageSize
+        long? cursor = jobTaskDtos.Count == command.PageSize && jobTaskDtos.Count > 0
             ? jobTaskDtos.Last().Id
             : null;
 
@@ -85,6 +85,8 @@ internal sealed class JobTaskService : IJobTaskService
         CreateJobTaskCommand command,
         CancellationToken cancellationToken)
     {
+        await CheckForExistingJobTasksAsync(command.DependOnTasks, cancellationToken);
+
         CreateJobTaskContext context = CreateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask jobTask = JobTaskFactory.CreateFromCreateContext(context);
 
@@ -177,6 +179,9 @@ internal sealed class JobTaskService : IJobTaskService
         SetJobTaskDependenciesCommand command,
         CancellationToken cancellationToken)
     {
+        await CheckForExistingJobTasksAsync(
+            new HashSet<long>(command.DependOnJobTaskIds) { command.JobTaskId },
+            cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
 
         var jobTaskDependenciesQuery = JobTaskDependenciesQuery.Build(builder => builder
@@ -215,6 +220,9 @@ internal sealed class JobTaskService : IJobTaskService
         SetJobTaskDependenciesCommand command,
         CancellationToken cancellationToken)
     {
+        await CheckForExistingJobTasksAsync(
+            new HashSet<long>(command.DependOnJobTaskIds) { command.JobTaskId },
+            cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
 
         var jobTaskDependenciesQuery = JobTaskDependenciesQuery.Build(builder => builder
@@ -264,15 +272,48 @@ internal sealed class JobTaskService : IJobTaskService
         return updatedFields.Any() ? string.Join(", ", updatedFields) : "None";
     }
 
+    private async Task CheckForExistingJobTasksAsync(
+        IReadOnlySet<long> jobTaskIds,
+        CancellationToken cancellationToken)
+    {
+        var jobTaskQuery = JobTaskQuery.Build(builder => builder
+            .WithJobTaskIds(jobTaskIds)
+            .WithPageSize(jobTaskIds.Count));
+
+        List<long> existingJobTaskIds = await _persistenceContext.JobTasks
+            .QueryAsync(jobTaskQuery, cancellationToken)
+            .Select(jobTask => jobTask.Id)
+            .ToListAsync(cancellationToken);
+
+        var missingIds = jobTaskIds
+            .Except(existingJobTaskIds)
+            .ToList();
+
+        if (missingIds.Count != 0)
+        {
+            string missingIdsString = string.Join(", ", missingIds);
+
+            _logger.LogWarning($"Job tasks with ids {missingIdsString} not found.");
+            throw new JobTaskNotFoundException($"Job tasks with ids {missingIdsString} not found.");
+        }
+    }
+
     private async Task CheckForCyclicDependencyAsync(
         long jobTaskId,
         IReadOnlySet<long> dependOnJobTaskIds,
         CancellationToken cancellationToken)
     {
-        var query = DependentJobTaskQuery.Build(builder => builder.WithJobTaskId(jobTaskId));
+        if (dependOnJobTaskIds.Contains(jobTaskId))
+        {
+            _logger.LogWarning($"Cyclic relationship between job tasks found: {jobTaskId} and {jobTaskId}");
+            throw new JobTaskCyclicDependencyException(
+                $"Cyclic relationship between job tasks found: {jobTaskId} and {jobTaskId}");
+        }
+
+        var dependentJobTaskQuery = DependentJobTaskQuery.Build(builder => builder.WithJobTaskId(jobTaskId));
 
         List<JobTask> dependentJobTasks = await _persistenceContext.JobTasks
-            .GetDependentJobTasksAsync(query, cancellationToken)
+            .GetDependentJobTasksAsync(dependentJobTaskQuery, cancellationToken)
             .ToListAsync(cancellationToken);
 
         foreach (JobTask jobTask in dependentJobTasks)

@@ -17,7 +17,7 @@ public partial class CreateJobTaskRequest : IValidatableObject
         {
             yield return new ValidationResult(
                 "Description field is required.",
-                [nameof(Title)]);
+                [nameof(Description)]);
         }
 
         if (AssigneeId <= 0)

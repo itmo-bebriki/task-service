@@ -1,7 +1,7 @@
 using Grpc.Core;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks;
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos;
-using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 using Itmo.Bebriki.Tasks.Contracts;
 using Itmo.Bebriki.Tasks.Presentation.Grpc.Converters.Requests;
 using Itmo.Bebriki.Tasks.Presentation.Grpc.Converters.Responses;

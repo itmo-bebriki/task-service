@@ -1,5 +1,5 @@
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks;
-using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Kafka.Contracts;
 using Itmo.Bebriki.Tasks.Presentation.Kafka.Converters;
 using Itmo.Dev.Platform.Kafka.Consumer;

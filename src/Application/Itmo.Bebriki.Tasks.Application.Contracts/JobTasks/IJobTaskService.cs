@@ -1,5 +1,5 @@
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos;
-using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 
 namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks;
 

@@ -1,4 +1,4 @@
-using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Kafka.Contracts;
 
 namespace Itmo.Bebriki.Tasks.Presentation.Kafka.Converters;

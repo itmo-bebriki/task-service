@@ -1,4 +1,4 @@
-using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
+using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Contracts;
 using Itmo.Bebriki.Tasks.Presentation.Grpc.Converters.Dtos.Enums;
 

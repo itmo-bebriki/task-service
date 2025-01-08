@@ -13,8 +13,6 @@
 
     <ItemGroup>
         <PackageReference Include="Itmo.Dev.Platform.Observability" />
-        <PackageReference Include="Itmo.Dev.Platform.BackgroundTasks.Hangfire.Postgres" />
-        <PackageReference Include="Itmo.Dev.Platform.BackgroundTasks.Postgres" />
     </ItemGroup>
 
     <ItemGroup>

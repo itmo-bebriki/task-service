@@ -155,7 +155,7 @@ internal sealed class JobTaskRepository : IJobTaskRepository
 
         await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand insertTaskCommand = connection.CreateCommand(insertTasksSql)
+        await using IPersistenceCommand insertTasksCommand = connection.CreateCommand(insertTasksSql)
             .AddParameter("titles", jobTasks.Select(t => t.Title))
             .AddParameter("descriptions", jobTasks.Select(t => t.Description))
             .AddParameter("assignee_ids", jobTasks.Select(t => t.AssigneeId))
@@ -167,7 +167,7 @@ internal sealed class JobTaskRepository : IJobTaskRepository
 
         var newJobTaskIds = new List<long>();
 
-        await using (DbDataReader reader = await insertTaskCommand.ExecuteReaderAsync(cancellationToken))
+        await using (DbDataReader reader = await insertTasksCommand.ExecuteReaderAsync(cancellationToken))
         {
             while (await reader.ReadAsync(cancellationToken))
             {
@@ -178,7 +178,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
         for (int i = 0; i < jobTasks.Count; i++)
         {
             JobTask jobTask = jobTasks.ElementAt(i);
-            long newJobTaskId = newJobTaskIds[i];
 
             if (!jobTask.DependOnJobTaskIds.Any())
             {
@@ -186,7 +185,7 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             }
 
             await using IPersistenceCommand insertDependenciesCommand = connection.CreateCommand(insertDependenciesSql)
-                .AddParameter("job_task_id", newJobTaskId)
+                .AddParameter("job_task_id", newJobTaskIds[i])
                 .AddParameter("depends_on_job_task_ids", jobTask.DependOnJobTaskIds.ToArray());
 
             await insertDependenciesCommand.ExecuteNonQueryAsync(cancellationToken);

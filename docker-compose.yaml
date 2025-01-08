@@ -3,7 +3,7 @@ name: "itmo-bebriki-task-service"
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres
+    container_name: task-service-postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

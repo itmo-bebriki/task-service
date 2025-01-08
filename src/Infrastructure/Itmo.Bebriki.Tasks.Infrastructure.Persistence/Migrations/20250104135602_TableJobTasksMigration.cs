@@ -5,7 +5,7 @@ namespace Itmo.Bebriki.Tasks.Infrastructure.Persistence.Migrations;
 
 #pragma warning disable SA1649
 [Migration(20250104135602, "table job task")]
-public sealed class TableJobTasksMigration : SqlMigration
+internal sealed class TableJobTasksMigration : SqlMigration
 {
     protected override string GetUpSql(IServiceProvider serviceProvider)
     {

@@ -5,7 +5,7 @@ namespace Itmo.Bebriki.Tasks.Infrastructure.Persistence.Migrations;
 
 #pragma warning disable SA1649
 [Migration(20250104135601, "enum job task priority")]
-public sealed class EnumJobTaskPriorityMigration : SqlMigration
+internal sealed class EnumJobTaskPriorityMigration : SqlMigration
 {
     protected override string GetUpSql(IServiceProvider serviceProvider)
     {

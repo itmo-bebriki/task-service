@@ -112,8 +112,7 @@ internal sealed class JobTaskService : IJobTaskService
         {
             _logger.LogError(
                 ex,
-                "Failed to create job task. JobTaskId: {JobTaskId}, Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, IsAgreed: {IsAgreed}, DependOnTaskIds: {DependOnTaskIds}",
-                jobTask.Id,
+                "Failed to create job task. Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, IsAgreed: {IsAgreed}, DependOnTaskIds: {DependOnTaskIds}",
                 jobTask.Title,
                 jobTask.AssigneeId,
                 jobTask.State,
@@ -269,7 +268,7 @@ internal sealed class JobTaskService : IJobTaskService
         if (context.DeadLine != null) updatedFields.Add(nameof(context.DeadLine));
         if (context.IsAgreed != null) updatedFields.Add(nameof(context.IsAgreed));
 
-        return updatedFields.Any() ? string.Join(", ", updatedFields) : "None";
+        return updatedFields.Count != 0 ? string.Join(", ", updatedFields) : "None";
     }
 
     private async Task CheckForExistingJobTasksAsync(

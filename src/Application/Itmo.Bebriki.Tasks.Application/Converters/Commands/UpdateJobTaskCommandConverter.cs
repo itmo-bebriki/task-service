@@ -1,7 +1,7 @@
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
 
-namespace Itmo.Bebriki.Tasks.Application.Converters.Operations;
+namespace Itmo.Bebriki.Tasks.Application.Converters.Commands;
 
 internal static class UpdateJobTaskCommandConverter
 {

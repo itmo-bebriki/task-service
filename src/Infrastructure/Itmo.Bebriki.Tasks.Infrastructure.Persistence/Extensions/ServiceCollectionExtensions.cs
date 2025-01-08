@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
 
         collection.AddScoped<IPersistenceContext, PersistenceContext>();
 
-        collection.AddScoped<IJobTaskRepository, JobTaskRepository>();
+        collection.AddSingleton<IJobTaskRepository, JobTaskRepository>();
 
         return collection;
     }

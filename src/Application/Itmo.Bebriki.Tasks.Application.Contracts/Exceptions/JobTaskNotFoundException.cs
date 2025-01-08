@@ -1,4 +1,4 @@
-namespace Itmo.Bebriki.Tasks.Application.Models.Exceptions;
+namespace Itmo.Bebriki.Tasks.Application.Contracts.Exceptions;
 
 public sealed class JobTaskNotFoundException : Exception
 {

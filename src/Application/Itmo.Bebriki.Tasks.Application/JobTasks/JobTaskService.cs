@@ -1,5 +1,6 @@
 using Itmo.Bebriki.Tasks.Application.Abstractions.Persistence;
 using Itmo.Bebriki.Tasks.Application.Abstractions.Persistence.Queries;
+using Itmo.Bebriki.Tasks.Application.Contracts.Exceptions;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos;
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Events;
@@ -7,7 +8,6 @@ using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Operations;
 using Itmo.Bebriki.Tasks.Application.Converters.Dtos;
 using Itmo.Bebriki.Tasks.Application.Converters.Events;
 using Itmo.Bebriki.Tasks.Application.Converters.Operations;
-using Itmo.Bebriki.Tasks.Application.Models.Exceptions;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
 using Itmo.Dev.Platform.Common.DateTime;

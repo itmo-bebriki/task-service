@@ -1,6 +1,6 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Itmo.Bebriki.Tasks.Application.Models.Exceptions;
+using Itmo.Bebriki.Tasks.Application.Contracts.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace Itmo.Bebriki.Tasks.Presentation.Grpc.Interceptors;

@@ -5,7 +5,6 @@ using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos;
 using Itmo.Bebriki.Tasks.Contracts;
 using Itmo.Bebriki.Tasks.Presentation.Grpc.Converters.Requests;
 using Itmo.Bebriki.Tasks.Presentation.Grpc.Converters.Responses;
-using JobTaskDto = Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Dtos.JobTaskDto;
 
 namespace Itmo.Bebriki.Tasks.Presentation.Grpc.Controllers;
 
@@ -16,20 +15,6 @@ public sealed class JobTaskController : JobTaskService.JobTaskServiceBase
     public JobTaskController(IJobTaskService jobTaskService)
     {
         _jobTaskService = jobTaskService;
-    }
-
-    public override async Task<GetJobTaskResponse> GetJobTaskById(
-        GetJobTaskRequest request,
-        ServerCallContext context)
-    {
-        GetJobTaskCommand internalCommand = GetJobTaskRequestConverter.ToInternal(request);
-
-        JobTaskDto internalResponse =
-            await _jobTaskService.GetJobTaskByIdAsync(internalCommand, context.CancellationToken);
-
-        GetJobTaskResponse response = GetJobTaskResponseConverter.FromInternal(internalResponse);
-
-        return response;
     }
 
     public override async Task<QueryJobTaskResponse> QueryJobTasks(

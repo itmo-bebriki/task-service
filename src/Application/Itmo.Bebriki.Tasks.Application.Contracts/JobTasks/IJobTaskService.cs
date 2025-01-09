@@ -5,10 +5,6 @@ namespace Itmo.Bebriki.Tasks.Application.Contracts.JobTasks;
 
 public interface IJobTaskService
 {
-    Task<JobTaskDto> GetJobTaskByIdAsync(
-        GetJobTaskCommand command,
-        CancellationToken cancellationToken);
-
     Task<PagedJobTaskDtos> QueryJobTasksAsync(
         QueryJobTaskCommand command,
         CancellationToken cancellationToken);

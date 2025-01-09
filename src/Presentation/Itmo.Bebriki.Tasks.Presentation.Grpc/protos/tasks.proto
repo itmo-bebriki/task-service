@@ -8,8 +8,6 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 service JobTaskService {
-  rpc GetJobTaskById (GetJobTaskRequest) returns (GetJobTaskResponse);
-
   rpc QueryJobTasks (QueryJobTaskRequest) returns (QueryJobTaskResponse);
 
   rpc CreateJobTask (CreateJobTaskRequest) returns (CreateJobTaskResponse);
@@ -19,10 +17,6 @@ service JobTaskService {
   rpc AddJobTaskDependencies (SetJobTaskDependenciesRequest) returns (AddJobTaskDependenciesResponse);
 
   rpc RemoveJobTaskDependencies (SetJobTaskDependenciesRequest) returns (RemoveJobTaskDependenciesResponse);
-}
-
-message GetJobTaskRequest {
-  int64 job_task_id = 1;
 }
 
 message QueryJobTaskRequest {
@@ -63,10 +57,6 @@ message UpdateJobTaskRequest {
 message SetJobTaskDependenciesRequest {
   int64 job_task_id = 1;
   repeated int64 depend_on_task_ids = 2;
-}
-
-message GetJobTaskResponse {
-  JobTaskDto job_task = 1;
 }
 
 message QueryJobTaskResponse {

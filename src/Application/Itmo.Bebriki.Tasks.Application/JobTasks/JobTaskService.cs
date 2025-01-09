@@ -40,29 +40,6 @@ internal sealed class JobTaskService : IJobTaskService
         _logger = logger;
     }
 
-    public async Task<JobTaskDto> GetJobTaskByIdAsync(
-        GetJobTaskCommand command,
-        CancellationToken cancellationToken)
-    {
-        var jobTaskQuery = JobTaskQuery.Build(builder => builder
-            .WithJobTaskId(command.JobTaskId)
-            .WithPageSize(1));
-
-        JobTask? jobTask = await _persistenceContext.JobTasks
-            .QueryAsync(jobTaskQuery, cancellationToken)
-            .SingleOrDefaultAsync(cancellationToken);
-
-        if (jobTask is null)
-        {
-            _logger.LogWarning($"Job task with id {command.JobTaskId} not found.");
-            throw new JobTaskNotFoundException($"Job task with id {command.JobTaskId} not found.");
-        }
-
-        JobTaskDto jobTaskDto = JobTaskDtoConverter.ToDto(jobTask);
-
-        return jobTaskDto;
-    }
-
     public async Task<PagedJobTaskDtos> QueryJobTasksAsync(
         QueryJobTaskCommand command,
         CancellationToken cancellationToken)

@@ -27,6 +27,7 @@ message JobTaskInfoValue {
     JobTaskPriority priority = 5;
     repeated int64 depend_on_task_ids = 6;
     google.protobuf.Timestamp dead_line = 7;
+    google.protobuf.Timestamp created_at = 8;
   }
   
   message JobTaskUpdated {

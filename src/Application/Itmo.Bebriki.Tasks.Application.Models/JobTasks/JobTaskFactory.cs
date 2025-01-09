@@ -46,20 +46,19 @@ public static class JobTaskFactory
         };
     }
 
-    public static JobTask CreateFromUpdateContext(JobTask jobTask, UpdateJobTaskContext context)
+    public static JobTask CreateFromUpdateContext(UpdateJobTaskContext context)
     {
-        // TODO валидация состояний
         return new JobTask
         {
-            Id = jobTask.Id,
-            Title = context.Title ?? jobTask.Title,
-            Description = context.Description ?? jobTask.Description,
-            AssigneeId = context.AssigneeId ?? jobTask.AssigneeId,
-            State = context.State ?? jobTask.State,
-            Priority = context.Priority ?? jobTask.Priority,
-            DependOnJobTaskIds = jobTask.DependOnJobTaskIds,
-            DeadLine = context.DeadLine ?? jobTask.DeadLine,
-            IsAgreed = context.IsAgreed ?? jobTask.IsAgreed,
+            Id = context.JobTaskId,
+            Title = context.Title,
+            Description = context.Description,
+            AssigneeId = context.AssigneeId,
+            State = context.State,
+            Priority = context.Priority,
+            DependOnJobTaskIds = context.DependsOnJobTaskIds,
+            DeadLine = context.DeadLine,
+            IsAgreed = context.IsAgreed,
             UpdatedAt = context.UpdatedAt,
         };
     }

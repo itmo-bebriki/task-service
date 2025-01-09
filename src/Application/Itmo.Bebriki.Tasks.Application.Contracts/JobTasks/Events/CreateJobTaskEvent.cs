@@ -10,4 +10,5 @@ public sealed record CreateJobTaskEvent(
     long AssigneeId,
     JobTaskPriority Priority,
     IReadOnlySet<long> DependOnTasks,
-    DateTimeOffset DeadLine) : IEvent;
+    DateTimeOffset DeadLine,
+    DateTimeOffset CreatedAt) : IEvent;

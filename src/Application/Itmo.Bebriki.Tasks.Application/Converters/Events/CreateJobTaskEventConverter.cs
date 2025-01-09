@@ -14,6 +14,7 @@ internal static class CreateJobTaskEventConverter
             AssigneeId: jobTask.AssigneeId,
             Priority: jobTask.Priority,
             DependOnTasks: jobTask.DependOnJobTaskIds,
-            DeadLine: jobTask.DeadLine);
+            DeadLine: jobTask.DeadLine,
+            CreatedAt: jobTask.UpdatedAt);
     }
 }

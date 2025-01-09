@@ -121,8 +121,9 @@ internal sealed class JobTaskService : IJobTaskService
             throw new JobTaskNotFoundException($"Job task with id {command.JobTaskId} not found.");
         }
 
-        UpdateJobTaskContext context = UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
-        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(jobTask, context);
+        UpdateJobTaskContext context =
+            UpdateJobTaskCommandConverter.ToContext(command, jobTask, _dateTimeProvider.Current);
+        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(context);
 
         UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask);
 
@@ -144,7 +145,7 @@ internal sealed class JobTaskService : IJobTaskService
                 ex,
                 "Failed to update job task. JobTaskId: {JobTaskId}, Updated Fields: {UpdatedFields}",
                 updatedJobTask.Id,
-                GetUpdatedFields(context));
+                GetUpdatedFields(command));
 
             await transaction.RollbackAsync(cancellationToken);
             throw;
@@ -160,9 +161,7 @@ internal sealed class JobTaskService : IJobTaskService
             cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
 
-        var jobTaskDependenciesQuery = JobTaskDependenciesQuery.Build(builder => builder
-            .WithJobTaskId(command.JobTaskId)
-            .WithDependOnIds(command.DependOnJobTaskIds));
+        JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
         AddJobTaskDependenciesEvent jobTaskDependenciesEvent =
             AddJobTaskDependenciesEventConverter.ToEvent(command.JobTaskId, command.DependOnJobTaskIds);
@@ -201,9 +200,7 @@ internal sealed class JobTaskService : IJobTaskService
             cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
 
-        var jobTaskDependenciesQuery = JobTaskDependenciesQuery.Build(builder => builder
-            .WithJobTaskId(command.JobTaskId)
-            .WithDependOnIds(command.DependOnJobTaskIds));
+        JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
         RemoveJobTaskDependenciesEvent jobTaskDependenciesEvent =
             RemoveJobTaskDependenciesEventConverter.ToEvent(command.JobTaskId, command.DependOnJobTaskIds);
@@ -233,17 +230,17 @@ internal sealed class JobTaskService : IJobTaskService
         }
     }
 
-    private static string GetUpdatedFields(UpdateJobTaskContext context)
+    private static string GetUpdatedFields(UpdateJobTaskCommand command)
     {
         var updatedFields = new List<string>();
 
-        if (context.Title != null) updatedFields.Add(nameof(context.Title));
-        if (context.Description != null) updatedFields.Add(nameof(context.Description));
-        if (context.AssigneeId != null) updatedFields.Add(nameof(context.AssigneeId));
-        if (context.State != null) updatedFields.Add(nameof(context.State));
-        if (context.Priority != null) updatedFields.Add(nameof(context.Priority));
-        if (context.DeadLine != null) updatedFields.Add(nameof(context.DeadLine));
-        if (context.IsAgreed != null) updatedFields.Add(nameof(context.IsAgreed));
+        if (command.Title != null) updatedFields.Add(nameof(command.Title));
+        if (command.Description != null) updatedFields.Add(nameof(command.Description));
+        if (command.AssigneeId != null) updatedFields.Add(nameof(command.AssigneeId));
+        if (command.State != null) updatedFields.Add(nameof(command.State));
+        if (command.Priority != null) updatedFields.Add(nameof(command.Priority));
+        if (command.DeadLine != null) updatedFields.Add(nameof(command.DeadLine));
+        if (command.IsAgreed != null) updatedFields.Add(nameof(command.IsAgreed));
 
         return updatedFields.Count != 0 ? string.Join(", ", updatedFields) : "None";
     }

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+option csharp_namespace = "Itmo.Bebriki.Tasks.Contracts";
+
+package itmo.bebriki.tasks;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+service JobTaskService {
+  rpc QueryJobTasks (QueryJobTaskRequest) returns (QueryJobTaskResponse);
+
+  rpc CreateJobTask (CreateJobTaskRequest) returns (CreateJobTaskResponse);
+
+  rpc UpdateJobTask (UpdateJobTaskRequest) returns (UpdateJobTaskResponse);
+
+  rpc AddJobTaskDependencies (SetJobTaskDependenciesRequest) returns (AddJobTaskDependenciesResponse);
+
+  rpc RemoveJobTaskDependencies (SetJobTaskDependenciesRequest) returns (RemoveJobTaskDependenciesResponse);
+}
+
+message QueryJobTaskRequest {
+  repeated int64 job_task_ids = 1;
+  repeated int64 assignee_ids = 2;
+  repeated JobTaskState states = 3;
+  repeated JobTaskPriority priorities = 4;
+  repeated int64 depends_on_task_ids = 5;
+  google.protobuf.Timestamp from_deadline = 6;
+  google.protobuf.Timestamp to_deadline = 7;
+  google.protobuf.BoolValue is_agreed = 8;
+  google.protobuf.Timestamp from_updated_at = 9;
+  google.protobuf.Timestamp to_updated_at = 10;
+  google.protobuf.Int64Value cursor = 11;
+  int32 page_size = 12;
+}
+
+message CreateJobTaskRequest {
+  string title = 1;
+  string description = 2;
+  int64 assignee_id = 3;
+  JobTaskPriority priority = 4;
+  repeated int64 depend_on_task_ids = 5;
+  google.protobuf.Timestamp dead_line = 6;
+}
+
+message UpdateJobTaskRequest {
+  int64 job_task_id = 1;
+  google.protobuf.StringValue title = 2;
+  google.protobuf.StringValue description = 3;
+  google.protobuf.Int64Value assignee_id = 4;
+  JobTaskState state = 5;
+  JobTaskPriority priority = 6;
+  google.protobuf.Timestamp dead_line = 7;
+  google.protobuf.BoolValue is_agreed = 8;
+}
+
+message SetJobTaskDependenciesRequest {
+  int64 job_task_id = 1;
+  repeated int64 depend_on_task_ids = 2;
+}
+
+message QueryJobTaskResponse {
+  google.protobuf.Int64Value cursor = 1;
+  repeated JobTaskDto job_tasks = 2;
+}
+
+message CreateJobTaskResponse {
+  int64 job_task_id = 1;
+}
+
+message UpdateJobTaskResponse { }
+
+message AddJobTaskDependenciesResponse { }
+
+message RemoveJobTaskDependenciesResponse { }
+
+message JobTaskDto {
+  int64 job_task_id = 1;
+  string title = 2;
+  string description = 3;
+  int64 assignee_id = 4;
+  JobTaskState state = 5;
+  JobTaskPriority priority = 6;
+  repeated int64 depend_on_task_ids = 7;
+  google.protobuf.Timestamp dead_line = 8;
+  bool is_agreed = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+enum JobTaskState {
+  JOB_TASK_STATE_UNSPECIFIED = 0;
+  JOB_TASK_STATE_BACKLOG = 1;
+  JOB_TASK_STATE_TO_DO = 2;
+  JOB_TASK_STATE_IN_PROGRESS = 3;
+  JOB_TASK_STATE_IN_REVIEW = 4;
+  JOB_TASK_STATE_DONE = 5;
+  JOB_TASK_STATE_CLOSED = 6;
+}
+
+enum JobTaskPriority {
+  JOB_TASK_PRIORITY_UNSPECIFIED = 0;
+  JOB_TASK_PRIORITY_LOW = 1;
+  JOB_TASK_PRIORITY_MEDIUM = 2;
+  JOB_TASK_PRIORITY_HIGH = 3;
+  JOB_TASK_PRIORITY_CRITICAL = 4;
+}

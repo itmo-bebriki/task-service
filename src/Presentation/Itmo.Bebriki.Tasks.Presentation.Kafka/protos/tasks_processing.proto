@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option csharp_namespace = "Itmo.Bebriki.Tasks.Kafka.Contracts";
+
+package itmo.bebriki.tasks.kafka;
+
+message JobTaskProcessingKey {
+  int64 job_task_id = 1;
+}
+
+message JobTaskProcessingValue {
+  bool is_agreed = 1;
+}

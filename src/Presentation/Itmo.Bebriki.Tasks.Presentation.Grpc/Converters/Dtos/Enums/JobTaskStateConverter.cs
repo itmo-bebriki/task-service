@@ -9,12 +9,9 @@ internal static class JobTaskStateConverter
         return state switch
         {
             Contracts.JobTaskState.Unspecified => JobTaskState.None,
-            Contracts.JobTaskState.Backlog => JobTaskState.Backlog,
-            Contracts.JobTaskState.ToDo => JobTaskState.ToDo,
-            Contracts.JobTaskState.InProgress => JobTaskState.InProgress,
-            Contracts.JobTaskState.InReview => JobTaskState.InReview,
-            Contracts.JobTaskState.Done => JobTaskState.Done,
-            Contracts.JobTaskState.Closed => JobTaskState.Closed,
+            Contracts.JobTaskState.PendingApproval => JobTaskState.PendingApproval,
+            Contracts.JobTaskState.Approved => JobTaskState.Approved,
+            Contracts.JobTaskState.Rejected => JobTaskState.Rejected,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null),
         };
     }
@@ -24,12 +21,9 @@ internal static class JobTaskStateConverter
         return state switch
         {
             JobTaskState.None => Contracts.JobTaskState.Unspecified,
-            JobTaskState.Backlog => Contracts.JobTaskState.Backlog,
-            JobTaskState.ToDo => Contracts.JobTaskState.ToDo,
-            JobTaskState.InProgress => Contracts.JobTaskState.InProgress,
-            JobTaskState.InReview => Contracts.JobTaskState.InReview,
-            JobTaskState.Done => Contracts.JobTaskState.Done,
-            JobTaskState.Closed => Contracts.JobTaskState.Closed,
+            JobTaskState.PendingApproval => Contracts.JobTaskState.PendingApproval,
+            JobTaskState.Approved => Contracts.JobTaskState.Approved,
+            JobTaskState.Rejected => Contracts.JobTaskState.Rejected,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null),
         };
     }

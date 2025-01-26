@@ -1,5 +1,6 @@
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Commands;
 using Itmo.Bebriki.Tasks.Kafka.Contracts;
+using Itmo.Bebriki.Tasks.Presentation.Kafka.Converters.Enums;
 
 namespace Itmo.Bebriki.Tasks.Presentation.Kafka.Converters;
 
@@ -9,6 +10,6 @@ internal static class JobTaskProcessingConverter
     {
         return new UpdateJobTaskCommand(
             JobTaskId: key.JobTaskId,
-            IsAgreed: value.IsAgreed);
+            State: JobTaskStateConverter.ToInternal(value.State));
     }
 }

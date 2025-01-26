@@ -27,11 +27,10 @@ message QueryJobTaskRequest {
   repeated int64 depends_on_task_ids = 5;
   google.protobuf.Timestamp from_deadline = 6;
   google.protobuf.Timestamp to_deadline = 7;
-  google.protobuf.BoolValue is_agreed = 8;
-  google.protobuf.Timestamp from_updated_at = 9;
-  google.protobuf.Timestamp to_updated_at = 10;
-  google.protobuf.Int64Value cursor = 11;
-  int32 page_size = 12;
+  google.protobuf.Timestamp from_updated_at = 8;
+  google.protobuf.Timestamp to_updated_at = 9;
+  google.protobuf.Int64Value cursor = 10;
+  int32 page_size = 11;
 }
 
 message CreateJobTaskRequest {
@@ -48,10 +47,8 @@ message UpdateJobTaskRequest {
   google.protobuf.StringValue title = 2;
   google.protobuf.StringValue description = 3;
   google.protobuf.Int64Value assignee_id = 4;
-  JobTaskState state = 5;
-  JobTaskPriority priority = 6;
-  google.protobuf.Timestamp dead_line = 7;
-  google.protobuf.BoolValue is_agreed = 8;
+  JobTaskPriority priority = 5;
+  google.protobuf.Timestamp dead_line = 6;
 }
 
 message SetJobTaskDependenciesRequest {
@@ -89,12 +86,9 @@ message JobTaskDto {
 
 enum JobTaskState {
   JOB_TASK_STATE_UNSPECIFIED = 0;
-  JOB_TASK_STATE_BACKLOG = 1;
-  JOB_TASK_STATE_TO_DO = 2;
-  JOB_TASK_STATE_IN_PROGRESS = 3;
-  JOB_TASK_STATE_IN_REVIEW = 4;
-  JOB_TASK_STATE_DONE = 5;
-  JOB_TASK_STATE_CLOSED = 6;
+  JOB_TASK_STATE_PENDING_APPROVAL = 1;
+  JOB_TASK_STATE_APPROVED = 2;
+  JOB_TASK_STATE_REJECTED = 3;
 }
 
 enum JobTaskPriority {

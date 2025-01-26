@@ -12,7 +12,6 @@ public sealed partial record JobTaskQuery(
     long[] DependsOnTaskIds,
     DateTimeOffset? FromDeadline,
     DateTimeOffset? ToDeadline,
-    bool? IsAgreed,
     DateTimeOffset? FromUpdatedAt,
     DateTimeOffset? ToUpdatedAt,
     long? Cursor,

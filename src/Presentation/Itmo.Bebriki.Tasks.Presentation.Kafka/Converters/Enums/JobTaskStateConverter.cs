@@ -9,12 +9,9 @@ internal static class JobTaskStateConverter
         return state switch
         {
             Tasks.Kafka.Contracts.JobTaskState.Unspecified => JobTaskState.None,
-            Tasks.Kafka.Contracts.JobTaskState.Backlog => JobTaskState.Backlog,
-            Tasks.Kafka.Contracts.JobTaskState.ToDo => JobTaskState.ToDo,
-            Tasks.Kafka.Contracts.JobTaskState.InProgress => JobTaskState.InProgress,
-            Tasks.Kafka.Contracts.JobTaskState.InReview => JobTaskState.InReview,
-            Tasks.Kafka.Contracts.JobTaskState.Done => JobTaskState.Done,
-            Tasks.Kafka.Contracts.JobTaskState.Closed => JobTaskState.Closed,
+            Tasks.Kafka.Contracts.JobTaskState.PendingApproval => JobTaskState.PendingApproval,
+            Tasks.Kafka.Contracts.JobTaskState.Approved => JobTaskState.Approved,
+            Tasks.Kafka.Contracts.JobTaskState.Rejected => JobTaskState.Rejected,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null),
         };
     }
@@ -24,12 +21,9 @@ internal static class JobTaskStateConverter
         return state switch
         {
             JobTaskState.None => Tasks.Kafka.Contracts.JobTaskState.Unspecified,
-            JobTaskState.Backlog => Tasks.Kafka.Contracts.JobTaskState.Backlog,
-            JobTaskState.ToDo => Tasks.Kafka.Contracts.JobTaskState.ToDo,
-            JobTaskState.InProgress => Tasks.Kafka.Contracts.JobTaskState.InProgress,
-            JobTaskState.InReview => Tasks.Kafka.Contracts.JobTaskState.InReview,
-            JobTaskState.Done => Tasks.Kafka.Contracts.JobTaskState.Done,
-            JobTaskState.Closed => Tasks.Kafka.Contracts.JobTaskState.Closed,
+            JobTaskState.PendingApproval => Tasks.Kafka.Contracts.JobTaskState.PendingApproval,
+            JobTaskState.Approved => Tasks.Kafka.Contracts.JobTaskState.Approved,
+            JobTaskState.Rejected => Tasks.Kafka.Contracts.JobTaskState.Rejected,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null),
         };
     }

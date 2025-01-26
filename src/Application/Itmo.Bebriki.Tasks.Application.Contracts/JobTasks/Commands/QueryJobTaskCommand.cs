@@ -10,7 +10,6 @@ public sealed record QueryJobTaskCommand(
     long[] DependsOnTaskIds,
     DateTimeOffset? FromDeadline,
     DateTimeOffset? ToDeadline,
-    bool? IsAgreed,
     DateTimeOffset? FromUpdatedAt,
     DateTimeOffset? ToUpdatedAt,
     long? Cursor,

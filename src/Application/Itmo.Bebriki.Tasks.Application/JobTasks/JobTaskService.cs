@@ -89,13 +89,12 @@ internal sealed class JobTaskService : IJobTaskService
         {
             _logger.LogError(
                 ex,
-                "Failed to create job task. Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, IsAgreed: {IsAgreed}, DependOnTaskIds: {DependOnTaskIds}",
+                "Failed to create job task. Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, DependOnTaskIds: {DependOnTaskIds}",
                 jobTask.Title,
                 jobTask.AssigneeId,
                 jobTask.State,
                 jobTask.Priority,
                 jobTask.DeadLine,
-                jobTask.IsAgreed,
                 string.Join(", ", jobTask.DependOnJobTaskIds));
 
             await transaction.RollbackAsync(cancellationToken);
@@ -121,11 +120,19 @@ internal sealed class JobTaskService : IJobTaskService
             throw new JobTaskNotFoundException($"Job task with id {command.JobTaskId} not found.");
         }
 
-        UpdateJobTaskContext context =
-            UpdateJobTaskCommandConverter.ToContext(command, jobTask, _dateTimeProvider.Current);
-        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(context);
+        if (jobTask.State is JobTaskState.PendingApproval && command.State is null)
+        {
+            _logger.LogWarning(
+                $"Job task with id {command.JobTaskId} cannot be updated. Job task state is '{jobTask.State}'.");
+            throw new JobTaskUpdateException(
+                $"Job task with id {command.JobTaskId} cannot be updated. Job task state is '{jobTask.State}'.");
+        }
 
-        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask);
+        UpdateJobTaskContext context =
+            UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
+        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(context, jobTask);
+
+        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask, context);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
@@ -246,7 +253,6 @@ internal sealed class JobTaskService : IJobTaskService
         if (command.State != null) updatedFields.Add(nameof(command.State));
         if (command.Priority != null) updatedFields.Add(nameof(command.Priority));
         if (command.DeadLine != null) updatedFields.Add(nameof(command.DeadLine));
-        if (command.IsAgreed != null) updatedFields.Add(nameof(command.IsAgreed));
 
         return updatedFields.Count != 0 ? string.Join(", ", updatedFields) : "None";
     }

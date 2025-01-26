@@ -1,11 +1,12 @@
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Events;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks;
+using Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
 
 namespace Itmo.Bebriki.Tasks.Application.Converters.Events;
 
 internal static class UpdateJobTaskEventConverter
 {
-    internal static UpdateJobTaskEvent ToEvent(JobTask jobTask, JobTask updatedJobTask)
+    internal static UpdateJobTaskEvent ToEvent(JobTask jobTask, JobTask updatedJobTask, UpdateJobTaskContext context)
     {
         return new UpdateJobTaskEvent(
             JobTaskId: updatedJobTask.Id,
@@ -15,7 +16,6 @@ internal static class UpdateJobTaskEventConverter
             AssigneeId: jobTask.AssigneeId == updatedJobTask.AssigneeId ? null : updatedJobTask.AssigneeId,
             State: jobTask.State == updatedJobTask.State ? null : updatedJobTask.State,
             Priority: jobTask.Priority == updatedJobTask.Priority ? null : updatedJobTask.Priority,
-            DeadLine: jobTask.DeadLine == updatedJobTask.DeadLine ? null : updatedJobTask.DeadLine,
-            IsAgreed: jobTask.IsAgreed == updatedJobTask.IsAgreed ? null : updatedJobTask.IsAgreed);
+            DeadLine: jobTask.DeadLine == updatedJobTask.DeadLine ? null : updatedJobTask.DeadLine);
     }
 }

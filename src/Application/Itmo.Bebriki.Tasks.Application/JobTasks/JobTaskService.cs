@@ -164,7 +164,10 @@ internal sealed class JobTaskService : IJobTaskService
         JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
         AddJobTaskDependenciesEvent jobTaskDependenciesEvent =
-            AddJobTaskDependenciesEventConverter.ToEvent(command.JobTaskId, command.DependOnJobTaskIds);
+            AddJobTaskDependenciesEventConverter.ToEvent(
+                command.JobTaskId,
+                command.DependOnJobTaskIds,
+                _dateTimeProvider.Current);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
@@ -203,7 +206,10 @@ internal sealed class JobTaskService : IJobTaskService
         JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
         RemoveJobTaskDependenciesEvent jobTaskDependenciesEvent =
-            RemoveJobTaskDependenciesEventConverter.ToEvent(command.JobTaskId, command.DependOnJobTaskIds);
+            RemoveJobTaskDependenciesEventConverter.ToEvent(
+                command.JobTaskId,
+                command.DependOnJobTaskIds,
+                _dateTimeProvider.Current);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,

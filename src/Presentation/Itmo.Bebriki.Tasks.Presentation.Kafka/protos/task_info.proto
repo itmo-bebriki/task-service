@@ -45,11 +45,13 @@ message JobTaskInfoValue {
   message JobTaskDependenciesAdded {
     int64 job_task_id = 1;
     repeated int64 added_dependencies = 2;
+    google.protobuf.Timestamp updated_at = 3;
   }
 
   message JobTaskDependenciesRemoved {
     int64 job_task_id = 1;
     repeated int64 removed_dependencies = 2;
+    google.protobuf.Timestamp updated_at = 3;
   }
 }
 

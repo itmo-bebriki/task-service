@@ -55,6 +55,7 @@ internal static class JobTaskInfoConverter
             {
                 JobTaskId = evt.JobTaskId,
                 AddedDependencies = { evt.DependOnJobTaskIds.ToArray() },
+                UpdatedAt = evt.UpdatedAt.ToTimestamp(),
             },
         };
     }
@@ -67,6 +68,7 @@ internal static class JobTaskInfoConverter
             {
                 JobTaskId = evt.JobTaskId,
                 RemovedDependencies = { evt.DependOnJobTaskIds.ToArray() },
+                UpdatedAt = evt.UpdatedAt.ToTimestamp(),
             },
         };
     }

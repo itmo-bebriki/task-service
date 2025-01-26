@@ -22,7 +22,6 @@ message JobTaskDecisionValue {
   message JobTaskCreateApprovalDecision {
     int64 job_task_id = 1;
     ApprovalResult result = 2;
-    google.protobuf.Timestamp decided_at = 3;
   }
 
   message JobTaskUpdateApprovalDecision {

@@ -21,19 +21,13 @@ message JobTaskDecisionValue {
 
   message JobTaskCreateApprovalDecision {
     int64 job_task_id = 1;
-    ApprovalResult result = 2;
+    JobTaskState state = 2;
   }
 
   message JobTaskUpdateApprovalDecision {
     int64 job_task_id = 1;
-    ApprovalResult result = 2;
+    JobTaskState state = 2;
     google.protobuf.Int64Value approved_assignee_id = 3;
     google.protobuf.Timestamp approved_deadline = 4;
   }
-}
-
-enum ApprovalResult {
-  APPROVAL_RESULT_UNSPECIFIED = 0;
-  APPROVAL_RESULT_APPROVED = 1;
-  APPROVAL_RESULT_REJECTED = 2;
 }

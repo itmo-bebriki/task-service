@@ -16,10 +16,10 @@ internal static class JobTaskDecisionConverter
         switch (value.DecisionCase)
         {
             case JobTaskDecisionValue.DecisionOneofCase.JobTaskCreateApprovalResult:
-                state = ApprovalResultConverter.ToInternal(value.JobTaskCreateApprovalResult.Result);
+                state = JobTaskStateConverter.ToInternal(value.JobTaskCreateApprovalResult.State);
                 break;
             case JobTaskDecisionValue.DecisionOneofCase.JobTaskUpdateApprovalResult:
-                state = ApprovalResultConverter.ToInternal(value.JobTaskCreateApprovalResult.Result);
+                state = JobTaskStateConverter.ToInternal(value.JobTaskCreateApprovalResult.State);
                 assigneeId = value.JobTaskUpdateApprovalResult.ApprovedAssigneeId;
                 deadline = value.JobTaskUpdateApprovalResult.ApprovedDeadline?.ToDateTimeOffset();
                 break;

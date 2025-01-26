@@ -30,6 +30,7 @@ internal static class JobTaskSubmissionConverter
         {
             JobTaskUpdateSubmission = new JobTaskSubmissionValue.Types.JobTaskUpdateSubmission
             {
+                JobTaskId = evt.JobTaskId,
                 NewAssigneeId = evt.AssigneeId,
                 NewDeadline = evt.DeadLine?.ToTimestamp(),
             },

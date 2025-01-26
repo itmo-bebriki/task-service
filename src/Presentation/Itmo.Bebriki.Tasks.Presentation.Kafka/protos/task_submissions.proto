@@ -30,7 +30,8 @@ message JobTaskSubmissionValue {
   }
   
   message JobTaskUpdateSubmission {
-    google.protobuf.Int64Value new_assignee_id = 1;
-    google.protobuf.Timestamp new_deadline = 2;
+    int64 job_task_id = 1;
+    google.protobuf.Int64Value new_assignee_id = 2;
+    google.protobuf.Timestamp new_deadline = 3;
   }
 }

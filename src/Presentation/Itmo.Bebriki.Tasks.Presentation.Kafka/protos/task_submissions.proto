@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "Itmo.Bebriki.Tasks.Kafka.Contracts";
+
+package itmo.bebriki.tasks.kafka;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "enums.proto";
+
+
+message JobTaskSubmissionKey {
+  int64 job_task_id = 1;
+}
+
+message JobTaskSubmissionValue {
+  oneof submission {
+      JobTaskCreateSubmission job_task_create_submission = 1;
+      JobTaskUpdateSubmission job_task_update_submission = 2;
+  }
+  
+  message JobTaskCreateSubmission {
+    int64 job_task_id = 1;
+    string title = 2;
+    string description = 3;
+    int64 assignee_id = 4;
+    JobTaskPriority priority = 5;
+    google.protobuf.Timestamp dead_line = 6;
+    google.protobuf.Timestamp created_at = 7;
+  }
+  
+  message JobTaskUpdateSubmission {
+    google.protobuf.Int64Value new_assignee_id = 1;
+    google.protobuf.Timestamp new_deadline = 2;
+  }
+}

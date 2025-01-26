@@ -123,9 +123,9 @@ internal sealed class JobTaskService : IJobTaskService
         if (jobTask.State is JobTaskState.PendingApproval && command.State is null)
         {
             _logger.LogWarning(
-                $"Job task with id {command.JobTaskId} cannot be updated. Job task state is '{jobTask.State}'.");
+                $"Job task with id {command.JobTaskId} cannot be updated when it in Pending Approval state.");
             throw new JobTaskUpdateException(
-                $"Job task with id {command.JobTaskId} cannot be updated. Job task state is '{jobTask.State}'.");
+                $"Job task with id {command.JobTaskId} cannot be updated when it in Pending Approval state.");
         }
 
         UpdateJobTaskContext context =
@@ -167,6 +167,7 @@ internal sealed class JobTaskService : IJobTaskService
             new HashSet<long>(command.DependOnJobTaskIds) { command.JobTaskId },
             cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
+        await CheckForJobTaskStateAsync(command.JobTaskId, cancellationToken);
 
         JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
@@ -209,6 +210,7 @@ internal sealed class JobTaskService : IJobTaskService
             new HashSet<long>(command.DependOnJobTaskIds) { command.JobTaskId },
             cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
+        await CheckForJobTaskStateAsync(command.JobTaskId, cancellationToken);
 
         JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
@@ -309,6 +311,25 @@ internal sealed class JobTaskService : IJobTaskService
                 throw new JobTaskCyclicDependencyException(
                     $"Cyclic relationship between job tasks found: {jobTaskId} and {jobTask.Id}");
             }
+        }
+    }
+
+    private async Task CheckForJobTaskStateAsync(long jobTaskId, CancellationToken cancellationToken)
+    {
+        var jobTaskQuery = JobTaskQuery.Build(builder => builder
+            .WithJobTaskId(jobTaskId)
+            .WithPageSize(1));
+
+        JobTask jobTask = await _persistenceContext.JobTasks
+            .QueryAsync(jobTaskQuery, cancellationToken)
+            .FirstAsync(cancellationToken);
+
+        if (jobTask.State is JobTaskState.PendingApproval)
+        {
+            _logger.LogWarning(
+                $"Job task with id {jobTaskId} cannot be updated when it in Pending Approval state.");
+            throw new JobTaskUpdateException(
+                $"Job task with id {jobTaskId} cannot be updated when it in Pending Approval state.");
         }
     }
 }

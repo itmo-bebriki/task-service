@@ -80,8 +80,7 @@ message JobTaskDto {
   JobTaskPriority priority = 6;
   repeated int64 depend_on_task_ids = 7;
   google.protobuf.Timestamp dead_line = 8;
-  bool is_agreed = 9;
-  google.protobuf.Timestamp updated_at = 10;
+  google.protobuf.Timestamp updated_at = 9;
 }
 
 enum JobTaskState {

@@ -5,18 +5,18 @@ using Itmo.Dev.Platform.Events;
 using Itmo.Dev.Platform.Kafka.Extensions;
 using Itmo.Dev.Platform.Kafka.Producer;
 
-namespace Itmo.Bebriki.Tasks.Presentation.Kafka.ProducerHandlers;
+namespace Itmo.Bebriki.Tasks.Presentation.Kafka.ProducerHandlers.JobTaskInfo;
 
-internal sealed class RemoveJobTaskDependenciesHandler : IEventHandler<RemoveJobTaskDependenciesEvent>
+internal sealed class UpdateJobTaskInfoHandler : IEventHandler<UpdateJobTaskEvent>
 {
     private readonly IKafkaMessageProducer<JobTaskInfoKey, JobTaskInfoValue> _producer;
 
-    public RemoveJobTaskDependenciesHandler(IKafkaMessageProducer<JobTaskInfoKey, JobTaskInfoValue> producer)
+    public UpdateJobTaskInfoHandler(IKafkaMessageProducer<JobTaskInfoKey, JobTaskInfoValue> producer)
     {
         _producer = producer;
     }
 
-    public async ValueTask HandleAsync(RemoveJobTaskDependenciesEvent evt, CancellationToken cancellationToken)
+    public async ValueTask HandleAsync(UpdateJobTaskEvent evt, CancellationToken cancellationToken)
     {
         var key = new JobTaskInfoKey { JobTaskId = evt.JobTaskId };
         JobTaskInfoValue value = JobTaskInfoConverter.ToValue(evt);

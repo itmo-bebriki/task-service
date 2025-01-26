@@ -46,31 +46,28 @@ public static class JobTaskFactory
 
     public static JobTask CreateFromUpdateContext(UpdateJobTaskContext context, JobTask prevJobTask)
     {
-        long? assigneeId = prevJobTask.AssigneeId;
-        DateTimeOffset? deadline = prevJobTask.DeadLine;
+        long assigneeId = prevJobTask.AssigneeId;
+        DateTimeOffset deadline = prevJobTask.DeadLine;
         JobTaskState state = prevJobTask.State;
 
         if (context.State is null)
         {
-            deadline = prevJobTask.DeadLine;
-            assigneeId = prevJobTask.AssigneeId;
-
             if (context.DeadLine is not null || context.AssigneeId is not null)
             {
+                deadline = context.DeadLine ?? prevJobTask.DeadLine;
+                assigneeId = context.AssigneeId ?? prevJobTask.AssigneeId;
                 state = JobTaskState.PendingApproval;
             }
         }
         else if (context.State is JobTaskState.Approved)
         {
-            deadline = context.DeadLine;
-            assigneeId = context.AssigneeId;
-            state = JobTaskState.Approved;
+            deadline = context.DeadLine ?? prevJobTask.DeadLine;
+            assigneeId = context.AssigneeId ?? prevJobTask.AssigneeId;
+            state = context.State.Value;
         }
         else if (context.State is JobTaskState.Rejected)
         {
-            deadline = null;
-            assigneeId = null;
-            state = JobTaskState.Rejected;
+            state = context.State.Value;
         }
 
         return new JobTask
@@ -78,11 +75,11 @@ public static class JobTaskFactory
             Id = context.JobTaskId,
             Title = context.Title ?? prevJobTask.Title,
             Description = context.Description ?? prevJobTask.Description,
-            AssigneeId = assigneeId ?? prevJobTask.AssigneeId,
+            AssigneeId = assigneeId,
             State = state,
             Priority = context.Priority ?? prevJobTask.Priority,
             DependOnJobTaskIds = prevJobTask.DependOnJobTaskIds,
-            DeadLine = deadline ?? prevJobTask.DeadLine,
+            DeadLine = deadline,
             UpdatedAt = context.UpdatedAt,
         };
     }

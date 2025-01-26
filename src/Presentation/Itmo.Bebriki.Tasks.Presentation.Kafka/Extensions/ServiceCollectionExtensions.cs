@@ -19,9 +19,9 @@ public static class ServiceCollectionExtensions
         collection.AddPlatformKafka(kafka => kafka
             .ConfigureOptions(configuration.GetSection(configurationSection))
             .AddConsumer(consumer => consumer
-                .WithKey<JobTaskProcessingKey>()
-                .WithValue<JobTaskProcessingValue>()
-                .WithConfiguration(configuration.GetSection($"{consumerKey}:JobTaskProcessing"))
+                .WithKey<JobTaskDecisionKey>()
+                .WithValue<JobTaskDecisionValue>()
+                .WithConfiguration(configuration.GetSection($"{consumerKey}:JobTaskDecision"))
                 .DeserializeKeyWithProto()
                 .DeserializeValueWithProto()
                 .HandleWith<JobTaskProcessingConsumerHandler>())
@@ -29,6 +29,12 @@ public static class ServiceCollectionExtensions
                 .WithKey<JobTaskInfoKey>()
                 .WithValue<JobTaskInfoValue>()
                 .WithConfiguration(configuration.GetSection($"{producerKey}:JobTaskInfo"))
+                .SerializeKeyWithProto()
+                .SerializeValueWithProto())
+            .AddProducer(producer => producer
+                .WithKey<JobTaskSubmissionKey>()
+                .WithValue<JobTaskSubmissionValue>()
+                .WithConfiguration(configuration.GetSection($"{producerKey}:JobSubmissionInfo"))
                 .SerializeKeyWithProto()
                 .SerializeValueWithProto()));
 

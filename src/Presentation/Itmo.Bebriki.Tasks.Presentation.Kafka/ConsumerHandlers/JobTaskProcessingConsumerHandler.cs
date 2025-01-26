@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Itmo.Bebriki.Tasks.Presentation.Kafka.ConsumerHandlers;
 
 internal sealed class JobTaskProcessingConsumerHandler
-    : IKafkaConsumerHandler<JobTaskProcessingKey, JobTaskProcessingValue>
+    : IKafkaConsumerHandler<JobTaskDecisionKey, JobTaskDecisionValue>
 {
     private readonly IJobTaskService _jobTaskService;
     private readonly ILogger<JobTaskProcessingConsumerHandler> _logger;
@@ -22,12 +22,12 @@ internal sealed class JobTaskProcessingConsumerHandler
     }
 
     public async ValueTask HandleAsync(
-        IEnumerable<IKafkaConsumerMessage<JobTaskProcessingKey, JobTaskProcessingValue>> messages,
+        IEnumerable<IKafkaConsumerMessage<JobTaskDecisionKey, JobTaskDecisionValue>> messages,
         CancellationToken cancellationToken)
     {
-        foreach (IKafkaConsumerMessage<JobTaskProcessingKey, JobTaskProcessingValue> message in messages)
+        foreach (IKafkaConsumerMessage<JobTaskDecisionKey, JobTaskDecisionValue> message in messages)
         {
-            UpdateJobTaskCommand internalCommand = JobTaskProcessingConverter.ToInternal(message.Key, message.Value);
+            UpdateJobTaskCommand internalCommand = JobTaskDecisionConverter.ToInternal(message.Key, message.Value);
             try
             {
                 await _jobTaskService.UpdateJobTaskAsync(internalCommand, cancellationToken);

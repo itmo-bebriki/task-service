@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option csharp_namespace = "Itmo.Bebriki.Tasks.Kafka.Contracts";
+
+package itmo.bebriki.tasks.kafka;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "enums.proto";
+
+
+message JobTaskDecisionKey {
+  int64 job_task_id = 1;
+}
+
+message JobTaskDecisionValue {
+  oneof decision {
+    JobTaskCreateApprovalDecision job_task_create_approval_result = 1;
+    JobTaskUpdateApprovalDecision job_task_update_approval_result = 2;
+  }
+
+  message JobTaskCreateApprovalDecision {
+    int64 job_task_id = 1;
+    ApprovalResult result = 2;
+    google.protobuf.Timestamp decided_at = 3;
+  }
+
+  message JobTaskUpdateApprovalDecision {
+    int64 job_task_id = 1;
+    ApprovalResult result = 2;
+    google.protobuf.Int64Value approved_assignee_id = 3;
+    google.protobuf.Timestamp approved_deadline = 4;
+  }
+}
+
+enum ApprovalResult {
+  APPROVAL_RESULT_UNSPECIFIED = 0;
+  APPROVAL_RESULT_APPROVED = 1;
+  APPROVAL_RESULT_REJECTED = 2;
+}

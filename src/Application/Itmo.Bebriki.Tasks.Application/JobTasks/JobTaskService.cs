@@ -132,7 +132,7 @@ internal sealed class JobTaskService : IJobTaskService
             UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
         JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(context, jobTask);
 
-        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask, context);
+        UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
@@ -141,6 +141,12 @@ internal sealed class JobTaskService : IJobTaskService
         try
         {
             await _persistenceContext.JobTasks.UpdateAsync([updatedJobTask], cancellationToken);
+
+            if (updateJobTaskEvent.State is JobTaskState.PendingApproval)
+            {
+                SubmissionJobTaskEvent submissionJobTaskEvent = SubmissionJobTaskEventConverter.ToEvent(context);
+                await _eventPublisher.PublishAsync(submissionJobTaskEvent, cancellationToken);
+            }
 
             await _eventPublisher.PublishAsync(updateJobTaskEvent, cancellationToken);
 

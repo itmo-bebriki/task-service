@@ -54,8 +54,6 @@ public static class JobTaskFactory
         {
             if (context.DeadLine is not null || context.AssigneeId is not null)
             {
-                deadline = context.DeadLine ?? prevJobTask.DeadLine;
-                assigneeId = context.AssigneeId ?? prevJobTask.AssigneeId;
                 state = JobTaskState.PendingApproval;
             }
         }

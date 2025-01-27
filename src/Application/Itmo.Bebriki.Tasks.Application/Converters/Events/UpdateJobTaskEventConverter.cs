@@ -1,12 +1,11 @@
 using Itmo.Bebriki.Tasks.Application.Contracts.JobTasks.Events;
 using Itmo.Bebriki.Tasks.Application.Models.JobTasks;
-using Itmo.Bebriki.Tasks.Application.Models.JobTasks.Contexts;
 
 namespace Itmo.Bebriki.Tasks.Application.Converters.Events;
 
 internal static class UpdateJobTaskEventConverter
 {
-    internal static UpdateJobTaskEvent ToEvent(JobTask jobTask, JobTask updatedJobTask, UpdateJobTaskContext context)
+    internal static UpdateJobTaskEvent ToEvent(JobTask jobTask, JobTask updatedJobTask)
     {
         return new UpdateJobTaskEvent(
             JobTaskId: updatedJobTask.Id,

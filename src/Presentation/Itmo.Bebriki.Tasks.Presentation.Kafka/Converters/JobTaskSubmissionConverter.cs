@@ -16,7 +16,7 @@ internal static class JobTaskSubmissionConverter
         };
     }
 
-    internal static JobTaskSubmissionValue ToValue(UpdateJobTaskEvent evt)
+    internal static JobTaskSubmissionValue ToValue(SubmissionJobTaskEvent evt)
     {
         return new JobTaskSubmissionValue
         {

@@ -11,5 +11,4 @@ public sealed record UpdateJobTaskEvent(
     long? AssigneeId = null,
     JobTaskState? State = null,
     JobTaskPriority? Priority = null,
-    DateTimeOffset? DeadLine = null,
-    bool? IsAgreed = null) : IEvent;
+    DateTimeOffset? DeadLine = null) : IEvent;

@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
             .AddProducer(producer => producer
                 .WithKey<JobTaskSubmissionKey>()
                 .WithValue<JobTaskSubmissionValue>()
-                .WithConfiguration(configuration.GetSection($"{producerKey}:JobSubmissionInfo"))
+                .WithConfiguration(configuration.GetSection($"{producerKey}:JobTaskSubmission"))
                 .SerializeKeyWithProto()
                 .SerializeValueWithProto()));
 

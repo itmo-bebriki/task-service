@@ -52,7 +52,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             jt.state,
             jt.priority,
             jt.dead_line,
-            jt.is_agreed,
             jt.updated_at,
             coalesce(ad.depends_on_ids, '{}') as depends_on_ids
         from job_tasks as jt
@@ -67,7 +66,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
                     or jt.job_task_id in (select d.job_task_id from dependency_tree as d))
             and (:from_deadline is null or jt.dead_line >= :from_deadline)
             and (:to_deadline is null or jt.dead_line <= :to_deadline)
-            and (:is_agreed is null or jt.is_agreed = :is_agreed)
             and (:from_updated_at is null or jt.updated_at >= :from_updated_at)
             and (:to_updated_at is null or jt.updated_at <= :to_updated_at)
         order by jt.job_task_id
@@ -84,7 +82,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             .AddParameter("depends_on_task_ids", query.DependsOnTaskIds)
             .AddParameter("from_deadline", query.FromDeadline)
             .AddParameter("to_deadline", query.ToDeadline)
-            .AddParameter("is_agreed", query.IsAgreed)
             .AddParameter("from_updated_at", query.FromUpdatedAt)
             .AddParameter("to_updated_at", query.ToUpdatedAt)
             .AddParameter("cursor", query.Cursor)
@@ -103,7 +100,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
                 priority: reader.GetFieldValue<JobTaskPriority>("priority"),
                 dependsOnIds: reader.GetFieldValue<long[]>("depends_on_ids"),
                 deadline: reader.GetFieldValue<DateTimeOffset>("dead_line"),
-                isAgreed: reader.GetBoolean("is_agreed"),
                 updatedAt: reader.GetFieldValue<DateTimeOffset>("updated_at"));
         }
     }
@@ -115,7 +111,7 @@ internal sealed class JobTaskRepository : IJobTaskRepository
         const string insertTasksSql =
         """
         insert into job_tasks as jt 
-            (title, description, assignee_id, state, priority, dead_line, is_agreed, updated_at)
+            (title, description, assignee_id, state, priority, dead_line, updated_at)
         select 
             source.title,
             source.description,
@@ -123,7 +119,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             source.state,
             source.priority,
             source.dead_line,
-            source.is_agreed,
             source.updated_at
         from unnest(
             :titles,
@@ -132,7 +127,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             :states,
             :priorities,
             :dead_lines,
-            :is_agreeds,
             :updated_ats
         ) as source (
             title,
@@ -141,7 +135,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             state,
             priority,
             dead_line,
-            is_agreed,
             updated_at
         )
         returning jt.job_task_id;
@@ -162,7 +155,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             .AddParameter("states", jobTasks.Select(t => t.State))
             .AddParameter("priorities", jobTasks.Select(t => t.Priority))
             .AddParameter("dead_lines", jobTasks.Select(t => t.DeadLine))
-            .AddParameter("is_agreeds", jobTasks.Select(t => t.IsAgreed))
             .AddParameter("updated_ats", jobTasks.Select(t => t.UpdatedAt));
 
         var newJobTaskIds = new List<long>();
@@ -209,7 +201,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             state = source.state,
             priority = source.priority,
             dead_line = source.dead_line,
-            is_agreed = source.is_agreed,
             updated_at = source.updated_at
         from unnest(
             :job_task_ids,
@@ -219,7 +210,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             :states,
             :priorities,
             :dead_lines,
-            :is_agreeds,
             :updated_ats
         ) as source (
             job_task_id,
@@ -229,7 +219,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             state,
             priority,
             dead_line,
-            is_agreed,
             updated_at
         )
         where jt.job_task_id = source.job_task_id;
@@ -245,7 +234,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             .AddParameter("states", jobTasks.Select(t => t.State))
             .AddParameter("priorities", jobTasks.Select(t => t.Priority))
             .AddParameter("dead_lines", jobTasks.Select(t => t.DeadLine))
-            .AddParameter("is_agreeds", jobTasks.Select(t => t.IsAgreed))
             .AddParameter("updated_ats", jobTasks.Select(t => t.UpdatedAt));
 
         await command.ExecuteNonQueryAsync(cancellationToken);
@@ -320,7 +308,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
             jt.state,
             jt.priority,
             jt.dead_line,
-            jt.is_agreed,
             jt.updated_at,
             coalesce(ad.depends_on_ids, '{}') as depends_on_ids
         from job_tasks as jt
@@ -348,7 +335,6 @@ internal sealed class JobTaskRepository : IJobTaskRepository
                 priority: reader.GetFieldValue<JobTaskPriority>("priority"),
                 dependsOnIds: reader.GetFieldValue<long[]>("depends_on_ids"),
                 deadline: reader.GetFieldValue<DateTimeOffset>("dead_line"),
-                isAgreed: reader.GetBoolean("is_agreed"),
                 updatedAt: reader.GetFieldValue<DateTimeOffset>("updated_at"));
         }
     }

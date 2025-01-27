@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "Itmo.Bebriki.Tasks.Kafka.Contracts";
+
+package itmo.bebriki.tasks.kafka;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+
+message JobTaskSubmissionKey {
+  int64 job_task_id = 1;
+}
+
+message JobTaskSubmissionValue {
+  int64 job_task_id = 1;
+  google.protobuf.Int64Value new_assignee_id = 2;
+  google.protobuf.Timestamp new_deadline = 3;
+}

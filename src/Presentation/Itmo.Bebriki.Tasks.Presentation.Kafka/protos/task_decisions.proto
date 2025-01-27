@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Itmo.Bebriki.Tasks.Kafka.Contracts";
+
+package itmo.bebriki.tasks.kafka;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "enums.proto";
+
+
+message JobTaskDecisionKey {
+  int64 job_task_id = 1;
+}
+
+message JobTaskDecisionValue {
+  int64 job_task_id = 1;
+  JobTaskState state = 2;
+  google.protobuf.Int64Value approved_assignee_id = 3;
+  google.protobuf.Timestamp approved_deadline = 4;
+}

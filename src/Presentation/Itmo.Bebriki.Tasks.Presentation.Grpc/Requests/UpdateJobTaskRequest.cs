@@ -20,13 +20,6 @@ public partial class UpdateJobTaskRequest : IValidatableObject
                 [nameof(AssigneeId)]);
         }
 
-        if (!Enum.IsDefined(typeof(JobTaskState), State))
-        {
-            yield return new ValidationResult(
-                "State field is invalid.",
-                [nameof(State)]);
-        }
-
         if (!Enum.IsDefined(typeof(JobTaskPriority), Priority))
         {
             yield return new ValidationResult(

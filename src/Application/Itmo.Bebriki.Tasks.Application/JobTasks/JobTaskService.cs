@@ -89,13 +89,12 @@ internal sealed class JobTaskService : IJobTaskService
         {
             _logger.LogError(
                 ex,
-                "Failed to create job task. Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, IsAgreed: {IsAgreed}, DependOnTaskIds: {DependOnTaskIds}",
+                "Failed to create job task. Title: {Title}, AssigneeId: {AssigneeId}, State: {State}, Priority: {Priority}, DeadLine: {DeadLine}, DependOnTaskIds: {DependOnTaskIds}",
                 jobTask.Title,
                 jobTask.AssigneeId,
                 jobTask.State,
                 jobTask.Priority,
                 jobTask.DeadLine,
-                jobTask.IsAgreed,
                 string.Join(", ", jobTask.DependOnJobTaskIds));
 
             await transaction.RollbackAsync(cancellationToken);
@@ -121,9 +120,17 @@ internal sealed class JobTaskService : IJobTaskService
             throw new JobTaskNotFoundException($"Job task with id {command.JobTaskId} not found.");
         }
 
+        if (jobTask.State is JobTaskState.PendingApproval && command.State is null)
+        {
+            _logger.LogWarning(
+                $"Job task with id {command.JobTaskId} cannot be updated when it in Pending Approval state.");
+            throw new JobTaskUpdateException(
+                $"Job task with id {command.JobTaskId} cannot be updated when it in Pending Approval state.");
+        }
+
         UpdateJobTaskContext context =
-            UpdateJobTaskCommandConverter.ToContext(command, jobTask, _dateTimeProvider.Current);
-        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(context);
+            UpdateJobTaskCommandConverter.ToContext(command, _dateTimeProvider.Current);
+        JobTask updatedJobTask = JobTaskFactory.CreateFromUpdateContext(context, jobTask);
 
         UpdateJobTaskEvent updateJobTaskEvent = UpdateJobTaskEventConverter.ToEvent(jobTask, updatedJobTask);
 
@@ -134,6 +141,12 @@ internal sealed class JobTaskService : IJobTaskService
         try
         {
             await _persistenceContext.JobTasks.UpdateAsync([updatedJobTask], cancellationToken);
+
+            if (updateJobTaskEvent.State is JobTaskState.PendingApproval)
+            {
+                SubmissionJobTaskEvent submissionJobTaskEvent = SubmissionJobTaskEventConverter.ToEvent(context);
+                await _eventPublisher.PublishAsync(submissionJobTaskEvent, cancellationToken);
+            }
 
             await _eventPublisher.PublishAsync(updateJobTaskEvent, cancellationToken);
 
@@ -160,11 +173,15 @@ internal sealed class JobTaskService : IJobTaskService
             new HashSet<long>(command.DependOnJobTaskIds) { command.JobTaskId },
             cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
+        await CheckForJobTaskStateAsync(command.JobTaskId, cancellationToken);
 
         JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
         AddJobTaskDependenciesEvent jobTaskDependenciesEvent =
-            AddJobTaskDependenciesEventConverter.ToEvent(command.JobTaskId, command.DependOnJobTaskIds);
+            AddJobTaskDependenciesEventConverter.ToEvent(
+                command.JobTaskId,
+                command.DependOnJobTaskIds,
+                _dateTimeProvider.Current);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
@@ -199,11 +216,15 @@ internal sealed class JobTaskService : IJobTaskService
             new HashSet<long>(command.DependOnJobTaskIds) { command.JobTaskId },
             cancellationToken);
         await CheckForCyclicDependencyAsync(command.JobTaskId, command.DependOnJobTaskIds, cancellationToken);
+        await CheckForJobTaskStateAsync(command.JobTaskId, cancellationToken);
 
         JobTaskDependenciesQuery jobTaskDependenciesQuery = SetJobTaskDependenciesCommandConverter.ToQuery(command);
 
         RemoveJobTaskDependenciesEvent jobTaskDependenciesEvent =
-            RemoveJobTaskDependenciesEventConverter.ToEvent(command.JobTaskId, command.DependOnJobTaskIds);
+            RemoveJobTaskDependenciesEventConverter.ToEvent(
+                command.JobTaskId,
+                command.DependOnJobTaskIds,
+                _dateTimeProvider.Current);
 
         await using IPersistenceTransaction transaction = await _transactionProvider.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
@@ -240,7 +261,6 @@ internal sealed class JobTaskService : IJobTaskService
         if (command.State != null) updatedFields.Add(nameof(command.State));
         if (command.Priority != null) updatedFields.Add(nameof(command.Priority));
         if (command.DeadLine != null) updatedFields.Add(nameof(command.DeadLine));
-        if (command.IsAgreed != null) updatedFields.Add(nameof(command.IsAgreed));
 
         return updatedFields.Count != 0 ? string.Join(", ", updatedFields) : "None";
     }
@@ -297,6 +317,25 @@ internal sealed class JobTaskService : IJobTaskService
                 throw new JobTaskCyclicDependencyException(
                     $"Cyclic relationship between job tasks found: {jobTaskId} and {jobTask.Id}");
             }
+        }
+    }
+
+    private async Task CheckForJobTaskStateAsync(long jobTaskId, CancellationToken cancellationToken)
+    {
+        var jobTaskQuery = JobTaskQuery.Build(builder => builder
+            .WithJobTaskId(jobTaskId)
+            .WithPageSize(1));
+
+        JobTask jobTask = await _persistenceContext.JobTasks
+            .QueryAsync(jobTaskQuery, cancellationToken)
+            .FirstAsync(cancellationToken);
+
+        if (jobTask.State is JobTaskState.PendingApproval)
+        {
+            _logger.LogWarning(
+                $"Job task with id {jobTaskId} cannot be updated when it in Pending Approval state.");
+            throw new JobTaskUpdateException(
+                $"Job task with id {jobTaskId} cannot be updated when it in Pending Approval state.");
         }
     }
 }

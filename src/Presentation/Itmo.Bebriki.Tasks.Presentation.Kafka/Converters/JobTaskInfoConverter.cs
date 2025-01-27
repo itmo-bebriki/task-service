@@ -18,6 +18,7 @@ internal static class JobTaskInfoConverter
                 Description = evt.Description,
                 AssigneeId = evt.AssigneeId,
                 Priority = JobTaskPriorityConverter.FromInternal(evt.Priority),
+                DependOnTaskIds = { evt.DependOnTasks.ToArray() },
                 DeadLine = evt.DeadLine.ToTimestamp(),
                 CreatedAt = evt.CreatedAt.ToTimestamp(),
             },
@@ -41,7 +42,6 @@ internal static class JobTaskInfoConverter
                     ? JobTaskPriority.Unspecified
                     : JobTaskPriorityConverter.FromInternal(evt.Priority.Value),
                 DeadLine = evt.DeadLine?.ToTimestamp(),
-                IsAgreed = evt.IsAgreed,
                 UpdatedAt = evt.UpdateAt.ToTimestamp(),
             },
         };
@@ -55,6 +55,7 @@ internal static class JobTaskInfoConverter
             {
                 JobTaskId = evt.JobTaskId,
                 AddedDependencies = { evt.DependOnJobTaskIds.ToArray() },
+                UpdatedAt = evt.UpdatedAt.ToTimestamp(),
             },
         };
     }
@@ -67,6 +68,7 @@ internal static class JobTaskInfoConverter
             {
                 JobTaskId = evt.JobTaskId,
                 RemovedDependencies = { evt.DependOnJobTaskIds.ToArray() },
+                UpdatedAt = evt.UpdatedAt.ToTimestamp(),
             },
         };
     }

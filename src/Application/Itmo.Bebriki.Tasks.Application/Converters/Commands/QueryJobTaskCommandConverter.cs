@@ -15,7 +15,6 @@ internal static class QueryJobTaskCommandConverter
             .WithDependsOnTaskIds(command.DependsOnTaskIds)
             .WithFromDeadline(command.FromDeadline)
             .WithToDeadline(command.ToDeadline)
-            .WithIsAgreed(command.IsAgreed)
             .WithFromUpdatedAt(command.FromUpdatedAt)
             .WithToUpdatedAt(command.ToUpdatedAt)
             .WithCursor(command.Cursor)

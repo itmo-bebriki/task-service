@@ -15,7 +15,6 @@ internal static class UpdateJobTaskEventConverter
             AssigneeId: jobTask.AssigneeId == updatedJobTask.AssigneeId ? null : updatedJobTask.AssigneeId,
             State: jobTask.State == updatedJobTask.State ? null : updatedJobTask.State,
             Priority: jobTask.Priority == updatedJobTask.Priority ? null : updatedJobTask.Priority,
-            DeadLine: jobTask.DeadLine == updatedJobTask.DeadLine ? null : updatedJobTask.DeadLine,
-            IsAgreed: jobTask.IsAgreed == updatedJobTask.IsAgreed ? null : updatedJobTask.IsAgreed);
+            DeadLine: jobTask.DeadLine == updatedJobTask.DeadLine ? null : updatedJobTask.DeadLine);
     }
 }

@@ -20,7 +20,5 @@ public sealed record JobTask
 
     public DateTimeOffset DeadLine { get; init; }
 
-    public bool IsAgreed { get; init; }
-
     public DateTimeOffset UpdatedAt { get; init; }
 }

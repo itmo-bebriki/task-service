@@ -11,5 +11,4 @@ public sealed record JobTaskDto(
     JobTaskPriority Priority,
     IReadOnlySet<long> DependOnTasks,
     DateTimeOffset DeadLine,
-    bool IsAgreed,
     DateTimeOffset UpdatedAt);

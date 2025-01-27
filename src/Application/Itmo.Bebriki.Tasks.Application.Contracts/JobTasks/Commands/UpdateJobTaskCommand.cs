@@ -9,5 +9,4 @@ public sealed record UpdateJobTaskCommand(
     long? AssigneeId = null,
     JobTaskState? State = null,
     JobTaskPriority? Priority = null,
-    DateTimeOffset? DeadLine = null,
-    bool? IsAgreed = null);
+    DateTimeOffset? DeadLine = null);

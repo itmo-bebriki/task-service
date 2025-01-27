@@ -7,27 +7,27 @@ using Microsoft.Extensions.Logging;
 
 namespace Itmo.Bebriki.Tasks.Presentation.Kafka.ConsumerHandlers;
 
-internal sealed class JobTaskProcessingConsumerHandler
-    : IKafkaConsumerHandler<JobTaskProcessingKey, JobTaskProcessingValue>
+internal sealed class JobTaskDecisionConsumerHandler
+    : IKafkaConsumerHandler<JobTaskDecisionKey, JobTaskDecisionValue>
 {
     private readonly IJobTaskService _jobTaskService;
-    private readonly ILogger<JobTaskProcessingConsumerHandler> _logger;
+    private readonly ILogger<JobTaskDecisionConsumerHandler> _logger;
 
-    public JobTaskProcessingConsumerHandler(
+    public JobTaskDecisionConsumerHandler(
         IJobTaskService jobTaskService,
-        ILogger<JobTaskProcessingConsumerHandler> logger)
+        ILogger<JobTaskDecisionConsumerHandler> logger)
     {
         _jobTaskService = jobTaskService;
         _logger = logger;
     }
 
     public async ValueTask HandleAsync(
-        IEnumerable<IKafkaConsumerMessage<JobTaskProcessingKey, JobTaskProcessingValue>> messages,
+        IEnumerable<IKafkaConsumerMessage<JobTaskDecisionKey, JobTaskDecisionValue>> messages,
         CancellationToken cancellationToken)
     {
-        foreach (IKafkaConsumerMessage<JobTaskProcessingKey, JobTaskProcessingValue> message in messages)
+        foreach (IKafkaConsumerMessage<JobTaskDecisionKey, JobTaskDecisionValue> message in messages)
         {
-            UpdateJobTaskCommand internalCommand = JobTaskProcessingConverter.ToInternal(message.Key, message.Value);
+            UpdateJobTaskCommand internalCommand = JobTaskDecisionConverter.ToInternal(message.Key, message.Value);
             try
             {
                 await _jobTaskService.UpdateJobTaskAsync(internalCommand, cancellationToken);

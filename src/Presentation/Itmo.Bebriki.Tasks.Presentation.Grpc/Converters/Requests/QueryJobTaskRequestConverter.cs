@@ -16,7 +16,6 @@ internal static class QueryJobTaskRequestConverter
             DependsOnTaskIds: request.DependsOnTaskIds?.ToArray() ?? [],
             FromDeadline: request.FromDeadline?.ToDateTimeOffset(),
             ToDeadline: request.ToDeadline?.ToDateTimeOffset(),
-            IsAgreed: request.IsAgreed,
             FromUpdatedAt: request.FromUpdatedAt?.ToDateTimeOffset(),
             ToUpdatedAt: request.ToUpdatedAt?.ToDateTimeOffset(),
             Cursor: request.Cursor,

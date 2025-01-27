@@ -18,7 +18,6 @@ internal static class JobTaskDtoConverter
             Priority = JobTaskPriorityConverter.FromInternal(internalDto.Priority),
             DependOnTaskIds = { internalDto.DependOnTasks.ToArray() },
             DeadLine = internalDto.DeadLine.ToTimestamp(),
-            IsAgreed = internalDto.IsAgreed,
             UpdatedAt = internalDto.UpdatedAt.ToTimestamp(),
         };
     }

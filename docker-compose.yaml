@@ -41,7 +41,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       ALLOW_PLAINTEXT_LISTENER: yes
       KAFKA_CREATE_TOPICS: >
-        job_task_processing:1:1,
+        job_task_decisions:1:1,
+        job_task_submissions:1:1,
         job_task_info:1:1,
     depends_on:
       - zookeeper
@@ -74,10 +75,12 @@ services:
       kafka.clusters.0.serde.0.name: ProtobufFile
       kafka.clusters.0.serde.0.properties.protobufFilesDir: /schemas/
       
-      kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.job_task_processing: itmo.bebriki.tasks.kafka.JobTaskProcessingKey
+      kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.job_task_decisions: itmo.bebriki.tasks.kafka.JobTaskDecisionKey
+      kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.job_task_submissions: itmo.bebriki.tasks.kafka.JobTaskSubmissionKey
       kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.job_task_info: itmo.bebriki.tasks.kafka.JobTaskInfoKey
       
-      kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.job_task_processing: itmo.bebriki.tasks.kafka.JobTaskProcessingValue
+      kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.job_task_decisions: itmo.bebriki.tasks.kafka.JobTaskDecisionValue
+      kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.job_task_submissions: itmo.bebriki.tasks.kafka.JobTaskSubmissionValue
       kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.job_task_info: itmo.bebriki.tasks.kafka.JobTaskInfoValue
 
 networks:

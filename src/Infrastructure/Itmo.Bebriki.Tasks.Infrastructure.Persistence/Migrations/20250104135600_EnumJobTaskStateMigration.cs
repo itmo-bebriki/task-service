@@ -5,7 +5,7 @@ namespace Itmo.Bebriki.Tasks.Infrastructure.Persistence.Migrations;
 
 #pragma warning disable SA1649
 [Migration(20250104135600, "enum job task state")]
-public sealed class EnumJobTaskState : SqlMigration
+public sealed class EnumJobTaskStateMigration : SqlMigration
 {
     protected override string GetUpSql(IServiceProvider serviceProvider)
     {
@@ -13,12 +13,9 @@ public sealed class EnumJobTaskState : SqlMigration
         """
         create type job_task_state as enum (
             'none',
-            'backlog',
-            'to_do',
-            'in_progress',
-            'in_review',
-            'done',
-            'closed'
+            'pending_approval',
+            'approved',
+            'rejected'
         );
         """;
     }

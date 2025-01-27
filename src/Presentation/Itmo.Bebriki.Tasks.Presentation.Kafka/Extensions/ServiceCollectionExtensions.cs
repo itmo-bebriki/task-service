@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
                 .WithConfiguration(configuration.GetSection($"{consumerKey}:JobTaskDecision"))
                 .DeserializeKeyWithProto()
                 .DeserializeValueWithProto()
-                .HandleWith<JobTaskProcessingConsumerHandler>())
+                .HandleWith<JobTaskDecisionConsumerHandler>())
             .AddProducer(producer => producer
                 .WithKey<JobTaskInfoKey>()
                 .WithValue<JobTaskInfoValue>()

@@ -7,15 +7,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Itmo.Bebriki.Tasks.Presentation.Kafka.ConsumerHandlers;
 
-internal sealed class JobTaskProcessingConsumerHandler
+internal sealed class JobTaskDecisionConsumerHandler
     : IKafkaConsumerHandler<JobTaskDecisionKey, JobTaskDecisionValue>
 {
     private readonly IJobTaskService _jobTaskService;
-    private readonly ILogger<JobTaskProcessingConsumerHandler> _logger;
+    private readonly ILogger<JobTaskDecisionConsumerHandler> _logger;
 
-    public JobTaskProcessingConsumerHandler(
+    public JobTaskDecisionConsumerHandler(
         IJobTaskService jobTaskService,
-        ILogger<JobTaskProcessingConsumerHandler> logger)
+        ILogger<JobTaskDecisionConsumerHandler> logger)
     {
         _jobTaskService = jobTaskService;
         _logger = logger;

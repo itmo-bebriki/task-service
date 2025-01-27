@@ -14,20 +14,8 @@ message JobTaskDecisionKey {
 }
 
 message JobTaskDecisionValue {
-  oneof decision {
-    JobTaskCreateApprovalDecision job_task_create_approval_result = 1;
-    JobTaskUpdateApprovalDecision job_task_update_approval_result = 2;
-  }
-
-  message JobTaskCreateApprovalDecision {
-    int64 job_task_id = 1;
-    JobTaskState state = 2;
-  }
-
-  message JobTaskUpdateApprovalDecision {
-    int64 job_task_id = 1;
-    JobTaskState state = 2;
-    google.protobuf.Int64Value approved_assignee_id = 3;
-    google.protobuf.Timestamp approved_deadline = 4;
-  }
+  int64 job_task_id = 1;
+  JobTaskState state = 2;
+  google.protobuf.Int64Value approved_assignee_id = 3;
+  google.protobuf.Timestamp approved_deadline = 4;
 }

@@ -18,6 +18,7 @@ internal static class JobTaskInfoConverter
                 Description = evt.Description,
                 AssigneeId = evt.AssigneeId,
                 Priority = JobTaskPriorityConverter.FromInternal(evt.Priority),
+                DependOnTaskIds = { evt.DependOnTasks.ToArray() },
                 DeadLine = evt.DeadLine.ToTimestamp(),
                 CreatedAt = evt.CreatedAt.ToTimestamp(),
             },

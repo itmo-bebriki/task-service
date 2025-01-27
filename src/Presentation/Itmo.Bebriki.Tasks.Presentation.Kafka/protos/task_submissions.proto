@@ -6,7 +6,6 @@ package itmo.bebriki.tasks.kafka;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-import "enums.proto";
 
 
 message JobTaskSubmissionKey {
